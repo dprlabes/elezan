@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elezan</title>
+    <meta name="description" content="Daniel Elezan @elezanes Painter, illustrator and designer">
+    
+    <!-- Enlace a tu CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Contenedor oculto hasta que carguen las imágenes -->
+    <div class="hidden" id="content">
+        
+        <main class="menu-container">
+            <nav class="art-menu">
+                
+                <!-- ART WORKS -->
+                <a class="hover-effect" href="LINK">
+                    <img alt="Art Works" class="button-img" src="artworks.webp" />
+                    <img alt="Art Works Subrayado" class="button-img top" src="artworks-s.webp" />
+                </a>
+
+                <!-- COMMERCIAL WORKS -->
+                <a class="hover-effect" href="LINK">
+                    <img alt="Commercial Works" class="button-img" src="comercialworks.webp" />
+                    <img alt="Commercial Works Subrayado" class="button-img top" src="comercialworks-s.webp" />
+                </a>
+
+                <!-- CONTACT -->
+                <a class="hover-effect" href="contact.html">
+                    <img alt="Contact" class="button-img" src="contact.webp" />
+                    <img alt="Contact Subrayado" class="button-img top" src="contact-s.webp" />
+                </a>
+
+                <!-- INFO -->
+                <a class="hover-effect" href="info.html">
+                    <img alt="Info" class="button-img" src="info.webp" />
+                    <img alt="Info Subrayado" class="button-img top" src="info-s.webp" />
+                </a>
+
+            </nav>
+        </main>
+
+    </div>
+
+    <!-- Script de carga inicial y cambio de fondo -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const images = document.images;
+            let loadedImages = 0;
+            const totalImages = images.length;
+
+            function imageLoaded() {
+                loadedImages++;
+                if (loadedImages === totalImages) {
+                    document.getElementById('content').classList.remove('hidden');
+                }
+            }
+
+            if (totalImages === 0) {
+                document.getElementById('content').classList.remove('hidden');
+            } else {
+                for (let i = 0; i < totalImages; i++) {
+                    const tempImage = new Image();
+                    tempImage.src = images[i].src;
+                    tempImage.onload = imageLoaded;
+                    tempImage.onerror = imageLoaded;
+                }
+            }
+        });
+
+        // Array con las imágenes de fondo exactas de tu carpeta
+        const backgrounds = [
+            'webfondo1.jpg', 
+            'webfondo2.jpg'
+        ];
+
+        let currentIndex = Math.floor(Math.random() * backgrounds.length);
+
+        backgrounds.forEach((url) => {
+            const img = new Image();
+            img.src = url;
+        });
+
+        function changeBackground() {
+            document.body.style.backgroundImage = `url('${backgrounds[currentIndex]}')`;
+            currentIndex = (currentIndex + 1) % backgrounds.length;
+        }
+
+        changeBackground();
+        setInterval(changeBackground, 10000);
+    </script>
+
+
+
+<!-- Script de carga inicial limpia -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const images = document.images;
+            let loadedImages = 0;
+            const totalImages = images.length;
+
+            function imageLoaded() {
+                loadedImages++;
+                if (loadedImages === totalImages) {
+                    document.getElementById('content').classList.remove('hidden');
+                }
+            }
+
+            if (totalImages === 0) {
+                document.getElementById('content').classList.remove('hidden');
+            } else {
+                for (let i = 0; i < totalImages; i++) {
+                    const tempImage = new Image();
+                    tempImage.src = images[i].src;
+                    tempImage.onload = imageLoaded;
+                    tempImage.onerror = imageLoaded;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

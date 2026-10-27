@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elezan - Contact</title>
+    <meta name="description" content="Daniel Elezan @elezanes Painter, illustrator and designer">
+    
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+
+        /* Estilos específicos de esta página */
+        body.contact-page {
+            background-image: url('fondofuego.gif');
+            margin: 0;
+            padding: 0;
+        }
+
+/* Aseguramos que la imagen de cabecera se adapte al ancho de la pantalla sin pasarse */
+        .header-img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 30px auto;
+        }
+
+       .contact-wrapper {
+            width: 100%;
+            max-width: 720px; /* Ancho perfecto */
+            margin: 0 auto;
+            padding: 50px 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+      
+
+        .contact-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            color: #000000;
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-family: sans-serif;
+            text-align: left;
+        }
+
+        .form-input, .form-textarea {
+            border-radius: 0px;
+            border: 2px solid black;
+            font-family: sans-serif;
+            font-size: 20px;
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: rgba(255, 255, 255, 0.884);
+        }
+
+        .form-textarea {
+            resize: none;
+            height: 180px;
+        }
+
+        .btn-container {
+            margin-top: 25px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .send-btn {
+            background: black;
+            border-radius: 50px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 12px;
+            width: 200px;
+            font-weight: bold;
+            transition: transform 0.1s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+
+       .disclaimer-text {
+            font-family: sans-serif;
+            font-size: 10px;
+            color: #000;
+            text-align: left; /* O text-align: center; si prefieres que quede centrado */
+            line-height: 1.4;
+            margin-top: 20px;
+            margin-bottom: 50px;
+            max-width: 550px; /* Aquí controlas lo estrecho que quieres que sea */
+            margin-left: auto;   /* Esto ayuda a centrarlo si el formulario es más ancho */
+            margin-right: auto;  /* Esto ayuda a centrarlo si el formulario es más ancho */
+        }
+
+        /* Hacemos que los iconos de redes sociales respondan al ancho de la pantalla */
+        .social-icon {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.2s ease;
+        }
+
+        /* Contenedor flexible por si la pantalla es muy pequeña */
+        .social-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+    
+    </style>
+</head>
+<body class="contact-page">
+
+    <div class="hidden" id="content">
+
+        <main class="contact-wrapper">
+            
+            <!-- Imagen Cabecera (SEND ME AN E-MAIL) -->
+            <img src="sendmeaemail.webp" alt="SEND ME AN EMAIL" class="header-img">
+
+            <!-- Formulario Formspree -->
+            <form action="https://formspree.io/f/mpwqdykw" method="POST" class="contact-form">
+                
+                <label class="form-label" for="name">NAME:</label>
+                <input id="name" name="name" required type="text" class="form-input" />
+
+                <label class="form-label" for="email">E-MAIL:</label>
+                <input id="email" name="email" required type="email" class="form-input" />
+
+                <label class="form-label" for="message">MESSAGE:</label>
+                <textarea id="message" name="message" required class="form-textarea"></textarea>
+
+                <div class="btn-container">
+                    <button type="submit" class="send-btn">SEND*</button>
+                </div>
+
+                <p class="disclaimer-text">
+                    *Al enviar este formulario, usted autoriza el uso de su nombre y correo electrónico para responder a su consulta. Asimismo, acepta la responsabilidad de su mensaje conforme a la ley, si procede.<br>
+                    *By submitting this form, you consent to the use of your name and email to respond to your inquiry. You also accept responsibility for your message in accordance with the law, if applicable.
+                </p>
+            </form>
+
+            <!-- Redes Sociales Abajo -->
+            <nav class="social-row">
+                <a href="https://instagram.com/tu_usuario" target="_blank" rel="noopener noreferrer">
+                    <img src="instagram.webp" alt="Instagram" class="social-icon">
+                </a>
+                <a href="https://tiktok.com/@tu_usuario" target="_blank" rel="noopener noreferrer">
+                    <img src="tiktok.webp" alt="TikTok" class="social-icon">
+                </a>
+                <a href="https://youtube.com/@tu_usuario" target="_blank" rel="noopener noreferrer">
+                    <img src="youtube.webp" alt="YouTube" class="social-icon">
+                </a>
+                <a href="https://x.com/tu_usuario" target="_blank" rel="noopener noreferrer">
+                    <img src="X-twitter.webp" alt="X Twitter" class="social-icon">
+                </a>
+            </nav>
+
+        </main>
+
+    </div>
+
+    <!-- Script de precarga de imágenes -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const images = document.images;
+            let loadedImages = 0;
+            const totalImages = images.length;
+
+            function imageLoaded() {
+                loadedImages++;
+                if (loadedImages === totalImages) {
+                    document.getElementById('content').classList.remove('hidden');
+                }
+            }
+
+            if (totalImages === 0) {
+                document.getElementById('content').classList.remove('hidden');
+            } else {
+                for (let i = 0; i < totalImages; i++) {
+                    const tempImage = new Image();
+                    tempImage.src = images[i].src;
+                    tempImage.onload = imageLoaded;
+                    tempImage.onerror = imageLoaded;
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

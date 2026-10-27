@@ -1,0 +1,76 @@
+/* --- ESTILOS GENERALES Y FONDO --- */
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh; /* Permite que crezca si el contenido es más alto */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed; /* Mantiene el fondo fijo y elegante al hacer scroll */
+    transition: background-image 1s ease-in-out;
+}
+
+/* Control de carga inicial */
+.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+#content {
+    opacity: 1;
+    visibility: visible;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* --- MENÚ CENTRADO Y ADAPTABLE --- */
+.menu-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px; /* Margen superior e inferior para que nunca peguen a los bordes */
+    box-sizing: border-box;
+}
+
+.art-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* --- EFECTO HOVER Y TAMAÑO REAL DE LAS IMÁGENES --- */
+.hover-effect {
+    position: relative;
+    display: inline-block;
+}
+
+.button-img {
+    display: block;
+    height: auto;
+    max-width: 100%;
+}
+
+/* La imagen subrayada se oculta totalmente por defecto */
+.hover-effect img.top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+}
+
+/* Al pasar el ratón, se muestra al instante sin parpadeos */
+.hover-effect:hover img.top {
+    visibility: visible;
+}
+
+.hover-effect:hover img:first-child {
+    visibility: hidden;
+}
+
+body.contact-page {
+    background-image: url('fondofuego.gif');
+}
