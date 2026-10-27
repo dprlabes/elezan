@@ -31,9 +31,10 @@
             align-items: center;
         }
 
-        /* Imagen circular superior (autorretrato / bio) */
+       /* Imagen circular superior (autorretrato / bio) */
         .profile-img {
-            height: auto;
+            max-width: 100%; /* Evita que rebase la pantalla en móviles */
+            height: auto;    /* Mantiene la proporción redonda perfecta */
             border-radius: 50%;
             display: block;
             margin: 0 auto 35px auto;
@@ -74,11 +75,11 @@
         /* 2. FUENTE COPYRIGHT: Georgia (Estilo editorial / catálogo) */
         .license-text {
             font-family: Georgia, serif;
-            font-size: 11px;
+            font-size: 12px;
             color: #000;
             text-align: center;
             line-height: 1.4;
-            margin-bottom: 100px; /* Separación ampliada respecto a los enlaces */
+            margin-bottom: 50px; /* Separación ampliada respecto a los enlaces */
             max-width: 650px;
         }
 
@@ -89,7 +90,7 @@
 
         /* 3. FUENTE ENLACES LEGALES: Predeterminada del sistema */
         .legal-links {
-            font-family: sans-serif;
+            font-family: arial;
             font-size: 12px;
             color: #000;
             text-align: center;
@@ -99,7 +100,7 @@
         .legal-links a {
             color: #000;
             text-decoration: none;
-            margin: 0 5px;
+            margin: 0 3px;
         }
 
         .legal-links a:hover {
