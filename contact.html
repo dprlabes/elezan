@@ -139,40 +139,56 @@
             <!-- Imagen Cabecera (SEND ME AN E-MAIL) -->
             <img src="sendmeaemail.webp" alt="SEND ME AN EMAIL" class="header-img">
 
-            <!-- Formulario Formspree -->
-            <form action="https://formspree.io/f/mpwqdykw" method="POST" class="contact-form">
-                
-                <label class="form-label" for="name">NAME:</label>
-                <input id="name" name="name" required type="text" class="form-input" />
+        <!-- Formulario Formspree -->
+<form action="https://formspree.io/f/mpwqdykw" method="POST" class="contact-form">
+    
+    <label class="form-label" for="name">NAME:</label>
+    <input id="name" name="name" required type="text" class="form-input" />
 
-                <label class="form-label" for="email">E-MAIL:</label>
-                <input id="email" name="email" required type="email" class="form-input" />
+    <label class="form-label" for="email">E-MAIL:</label>
+    <input id="email" name="email" required type="email" class="form-input" />
 
-                <label class="form-label" for="message">MESSAGE:</label>
-                <textarea id="message" name="message" required class="form-textarea"></textarea>
+    <label class="form-label" for="message">MESSAGE:</label>
+    <textarea id="message" name="message" required class="form-textarea"></textarea>
 
-                <div class="btn-container">
-                    <button type="submit" class="send-btn">SEND*</button>
-                </div>
+    <!-- Casilla de Aceptación Obligatoria (RGPD) con Icono Personalizado -->
+    <div class="privacy-consent" style="margin: 15px 0;">
+        <label class="custom-checkbox-container">
+            <input type="checkbox" name="privacy_policy" value="accepted" required>
+            <span class="custom-checkmark"></span>
+            <span class="checkbox-label-text">
+                He leído y acepto la <a href="privacy.html" target="_blank">Política de Privacidad</a> / I have read and accept the <a href="privacy.html" target="_blank">Privacy Policy</a>.
+            </span>
+        </label>
+    </div>
 
-                <p class="disclaimer-text">
-                    *Al enviar este formulario, usted autoriza el uso de su nombre y correo electrónico para responder a su consulta. Asimismo, acepta la responsabilidad de su mensaje conforme a la ley, si procede.<br>
-                    *By submitting this form, you consent to the use of your name and email to respond to your inquiry. You also accept responsibility for your message in accordance with the law, if applicable.
-                </p>
-            </form>
+    <div class="btn-container">
+        <button type="submit" class="send-btn">SEND*</button>
+    </div>
+
+  <!-- Primera capa de información legal (RGPD España / UE) -->
+<div class="disclaimer-text" style="margin-top: 15px; font-size: 11px; line-height: 1.4; color: #444;">
+    <p style="margin-bottom: 8px;">
+        <strong>Información básica de protección de datos:</strong> <strong>Responsable:</strong> Elezan. <strong>Finalidad:</strong> Responder a tu consulta y gestionar el contacto. <strong>Legitimación:</strong> Consentimiento del interesado. <strong>Encargado del tratamiento:</strong> Formspree Inc. <strong>Derechos:</strong> Puedes acceder, rectificar o suprimir tus datos solicitándolo a través de esta web. Más información en la <a href="privacy.html" style="color: #000; text-decoration: underline;">Política de Privacidad</a>.
+    </p>
+    <p style="margin: 0;">
+        Al enviar, consientes el uso de tu nombre y correo para responder a tu mensaje. Asimismo, te haces responsable de su contenido conforme a la ley si procede. / By submitting, you consent to the use of your name and email to respond to your message. Likewise, you accept responsibility for its content under the law where applicable.
+    </p>
+</div>
+</form>
 
             <!-- Redes Sociales Abajo -->
             <nav class="social-row">
-                <a href="https://instagram.com/tu_usuario" target="_blank" rel="noopener noreferrer">
+                <a href="https://instagram.com/elezanes" target="_blank" rel="noopener noreferrer">
                     <img src="instagram.webp" alt="Instagram" class="social-icon">
                 </a>
-                <a href="https://tiktok.com/@tu_usuario" target="_blank" rel="noopener noreferrer">
+                <a href="https://tiktok.com/@elezanes" target="_blank" rel="noopener noreferrer">
                     <img src="tiktok.webp" alt="TikTok" class="social-icon">
                 </a>
-                <a href="https://youtube.com/@tu_usuario" target="_blank" rel="noopener noreferrer">
+                <a href="https://youtube.com/@elezanes" target="_blank" rel="noopener noreferrer">
                     <img src="youtube.webp" alt="YouTube" class="social-icon">
                 </a>
-                <a href="https://x.com/tu_usuario" target="_blank" rel="noopener noreferrer">
+                <a href="https://x.com/elezanes" target="_blank" rel="noopener noreferrer">
                     <img src="X-twitter.webp" alt="X Twitter" class="social-icon">
                 </a>
             </nav>
