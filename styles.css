@@ -1,17 +1,18 @@
-/* --- ESTILOS GENERALES Y FONDO --- */
+/* ==========================================================================
+   1. ESTILOS GENERALES Y FONDO
+   ========================================================================== */
 body {
     margin: 0;
     padding: 0;
     width: 100%;
-    min-height: 100vh; /* Permite que crezca si el contenido es más alto */
+    min-height: 100vh;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    background-attachment: fixed; /* Mantiene el fondo fijo y elegante al hacer scroll */
+    background-attachment: fixed;
     transition: background-image 1s ease-in-out;
 }
 
-/* Control de carga inicial */
 .hidden {
     opacity: 0;
     visibility: hidden;
@@ -24,14 +25,16 @@ body {
     min-height: 100vh;
 }
 
-/* --- MENÚ CENTRADO Y ADAPTABLE --- */
+/* ==========================================================================
+   2. MENÚ CENTRADO Y ADAPTABLE (ESCRITORIO / PC)
+   ========================================================================== */
 .menu-container {
     width: 100%;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 40px 20px; /* Margen superior e inferior para que nunca peguen a los bordes */
+    padding: 40px 20px;
     box-sizing: border-box;
 }
 
@@ -42,27 +45,38 @@ body {
     gap: 20px;
 }
 
-/* --- EFECTO HOVER Y TAMAÑO REAL DE LAS IMÁGENES --- */
 .hover-effect {
     position: relative;
     display: inline-block;
+    text-align: center;
 }
 
+/* En escritorio: Controlamos el tamaño nativo para que no se sobredimensione al achicar */
 .button-img {
     display: block;
     height: auto;
     max-width: 100%;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: auto;
 }
 
-/* La imagen subrayada se oculta totalmente por defecto */
+/* Límites máximos en escritorio para que la transición antes de la tablet sea suave */
+.btn-art { max-width: 500px; }
+.btn-commercial { max-width: 580px; }
+.btn-contact { max-width: 400px; }
+.btn-info { max-width: 190px; }
+
 .hover-effect img.top {
     position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
     visibility: hidden;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: auto;
 }
 
-/* Al pasar el ratón, se muestra al instante sin parpadeos */
 .hover-effect:hover img.top {
     visibility: visible;
 }
@@ -71,7 +85,72 @@ body {
     visibility: hidden;
 }
 
-/* Estilos del Checkbox Personalizado */
+/* ==========================================================================
+   3. CONFIGURACIÓN: TABLETS GRANDES (IPAD AIR, PRO, ETC. 769px - 1024px)
+   ========================================================================== */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .menu-container { padding: 30px 15px; }
+    .art-menu { width: 100%; gap: 18px; }
+    .hover-effect { display: block; width: 100%; text-align: center; }
+
+    .btn-art { width: 55vw !important; max-width: 480px !important; margin: 0 auto !important; }
+    .btn-commercial { width: 65vw !important; max-width: 560px !important; margin: 0 auto !important; }
+    .btn-contact { width: 45vw !important; max-width: 380px !important; margin: 0 auto !important; }
+    .btn-info { width: 22vw !important; max-width: 190px !important; margin: 0 auto !important; }
+
+    .hover-effect.art-box img.top { width: 55vw !important; max-width: 480px !important; left: 50% !important; transform: translateX(-50%) !important; }
+    .hover-effect.commercial-box img.top { width: 65vw !important; max-width: 560px !important; left: 50% !important; transform: translateX(-50%) !important; }
+    .hover-effect.contact-box img.top { width: 45vw !important; max-width: 380px !important; left: 50% !important; transform: translateX(-50%) !important; }
+    .hover-effect.info-box img.top { width: 22vw !important; max-width: 190px !important; left: 50% !important; transform: translateX(-50%) !important; }
+    
+    .hover-effect img.top { position: absolute; top: 0; height: auto !important; }
+}
+
+/* ==========================================================================
+   4. CONFIGURACIÓN: IPAD MINI Y TABLETS ESTRECHAS (601px - 768px)
+   ========================================================================== */
+@media (min-width: 601px) and (max-width: 768px) {
+    .menu-container { padding: 25px 15px; }
+    .art-menu { width: 100%; gap: 15px; }
+    .hover-effect { display: block; width: 100%; text-align: center; }
+
+    .btn-art { width: 70% !important; max-width: 380px !important; margin: 0 auto !important; }
+    .btn-commercial { width: 80% !important; max-width: 440px !important; margin: 0 auto !important; }
+    .btn-contact { width: 60% !important; max-width: 320px !important; margin: 0 auto !important; }
+    .btn-info { width: 30% !important; max-width: 160px !important; margin: 0 auto !important; }
+
+    .hover-effect.art-box img.top { width: 70% !important; max-width: 380px !important; left: 50% !important; transform: translateX(-50%) !important; }
+    .hover-effect.commercial-box img.top { width: 80% !important; max-width: 440px !important; left: 50% !important; transform: translateX(-50%) !important; }
+    .hover-effect.contact-box img.top { width: 60% !important; max-width: 320px !important; left: 50% !important; transform: translateX(-50%) !important; }
+    .hover-effect.info-box img.top { width: 30% !important; max-width: 160px !important; left: 50% !important; transform: translateX(-50%) !important; }
+    
+    .hover-effect img.top { position: absolute; top: 0; height: auto !important; }
+}
+
+/* ==========================================================================
+   5. CONFIGURACIÓN: MÓVILES (HASTA 600px)
+   ========================================================================== */
+@media (max-width: 600px) {
+    .menu-container { padding: 20px 12px; }
+    .art-menu { width: 100%; gap: 15px; }
+    .hover-effect { display: block; width: 100%; text-align: center; }
+
+    .btn-art { width: 85% !important; max-width: 360px !important; margin: 0 auto !important; }
+    .btn-commercial { width: 95% !important; max-width: 420px !important; margin: 0 auto !important; }
+    .btn-contact { width: 70% !important; max-width: 300px !important; margin: 0 auto !important; }
+    .btn-info { width: 38% !important; max-width: 150px !important; margin: 0 auto !important; }
+
+    .hover-effect.art-box img.top { width: 85% !important; max-width: 360px !important; left: 50% !important; transform: translateX(-50%) !important; }
+    .hover-effect.commercial-box img.top { width: 95% !important; max-width: 420px !important; left: 50% !important; transform: translateX(-50%) !important; }
+    .hover-effect.contact-box img.top { width: 70% !important; max-width: 300px !important; left: 50% !important; transform: translateX(-50%) !important; }
+    .hover-effect.info-box img.top { width: 38% !important; max-width: 150px !important; left: 50% !important; transform: translateX(-50%) !important; }
+    
+    .hover-effect img.top { position: absolute; top: 0; height: auto !important; }
+}
+
+/* ==========================================================================
+   6. COMPONENTES: CHECKBOX PERSONALIZADO (CONTACTO)
+   ========================================================================== */
 .custom-checkbox-container {
     display: flex;
     align-items: center;
@@ -81,10 +160,9 @@ body {
     font-size: 12px;
     user-select: none;
     text-align: left;
-    position: relative; /* Necesario para la posición del input de aviso */
+    position: relative;
 }
 
-/* Hace que el input sea invisible pero mantenga activo el aviso nativo del navegador */
 .custom-checkbox-container input {
     position: absolute;
     opacity: 0.01;
@@ -96,7 +174,6 @@ body {
     transform: translateY(-50%);
 }
 
-/* El recuadro exterior personalizado */
 .custom-checkmark {
     display: flex;
     align-items: center;
@@ -109,10 +186,9 @@ body {
     box-sizing: border-box;
 }
 
-/* El símbolo personalizado que aparece al marcar la casilla */
 .custom-checkbox-container input:checked ~ .custom-checkmark::after {
-    content: "✔"; /* Puedes cambiar "✔" por "★", "✖", "●", "✦", etc. */
-    font-size: 20px; /* Ajustado ligeramente para que encaje bien en los 20px del cuadro */
+    content: "✔";
+    font-size: 20px;
     color: #000;
     line-height: 1;
 }

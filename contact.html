@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="styles.css">
 
     <style>
-
         /* Estilos específicos de esta página */
         body.contact-page {
             background-image: url('fondofuego.gif');
@@ -18,7 +17,20 @@
             padding: 0;
         }
 
-/* Aseguramos que la imagen de cabecera se adapte al ancho de la pantalla sin pasarse */
+        /* Control de carga inicial */
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #content {
+            opacity: 1;
+            visibility: visible;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* Imagen de cabecera */
         .header-img {
             max-width: 100%;
             height: auto;
@@ -26,9 +38,9 @@
             margin: 0 auto 30px auto;
         }
 
-       .contact-wrapper {
+        .contact-wrapper {
             width: 100%;
-            max-width: 720px; /* Ancho perfecto */
+            max-width: 720px;
             margin: 0 auto;
             padding: 50px 20px;
             box-sizing: border-box;
@@ -36,8 +48,6 @@
             flex-direction: column;
             align-items: center;
         }
-
-      
 
         .contact-form {
             width: 100%;
@@ -95,20 +105,50 @@
             transform: scale(1.05);
         }
 
-       .disclaimer-text {
+        /* Bloque de información legal limpio */
+        .disclaimer-text {
             font-family: sans-serif;
             font-size: 10px;
-            color: #000;
-            text-align: left; /* O text-align: center; si prefieres que quede centrado */
             line-height: 1.4;
-            margin-top: 20px;
+            color: #444;
+            text-align: left;
+            margin-top: 15px;
             margin-bottom: 50px;
-            max-width: 550px; /* Aquí controlas lo estrecho que quieres que sea */
-            margin-left: auto;   /* Esto ayuda a centrarlo si el formulario es más ancho */
-            margin-right: auto;  /* Esto ayuda a centrarlo si el formulario es más ancho */
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* Hacemos que los iconos de redes sociales respondan al ancho de la pantalla */
+        .disclaimer-text p {
+            margin: 0 0 8px 0;
+        }
+
+        .disclaimer-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .disclaimer-text a {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        /* --- REDES SOCIALES: Tamaño original en escritorio y tablet --- */
+        .social-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: nowrap;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .social-row a {
+            display: block;
+            flex-shrink: 0;
+        }
+
         .social-icon {
             max-width: 100%;
             height: auto;
@@ -116,18 +156,26 @@
             transition: transform 0.2s ease;
         }
 
-        /* Contenedor flexible por si la pantalla es muy pequeña */
-        .social-row {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            width: 100%;
+        .social-row a:hover .social-icon {
+            transform: scale(1.05);
         }
 
-    
+        /* --- SOLO EN MÓVILES: Tamaño amplio y separación idéntica --- */
+        @media (max-width: 600px) {
+            .social-row {
+                width: 100%;
+                justify-content: center;
+                gap: 15px;
+                padding: 0 10px;
+                box-sizing: border-box;
+            }
+
+            .social-icon {
+                width: auto;
+                max-width: 68px;
+                height: auto;
+            }
+        }
     </style>
 </head>
 <body class="contact-page">
@@ -139,43 +187,43 @@
             <!-- Imagen Cabecera (SEND ME AN E-MAIL) -->
             <img src="sendmeaemail.webp" alt="SEND ME AN EMAIL" class="header-img">
 
-        <!-- Formulario Formspree -->
-<form action="https://formspree.io/f/mpwqdykw" method="POST" class="contact-form">
-    
-    <label class="form-label" for="name">NAME:</label>
-    <input id="name" name="name" required type="text" class="form-input" />
+            <!-- Formulario Formspree -->
+            <form action="https://formspree.io/f/mpwqdykw" method="POST" class="contact-form">
+                
+                <label class="form-label" for="name">NAME:</label>
+                <input id="name" name="name" required type="text" class="form-input" />
 
-    <label class="form-label" for="email">E-MAIL:</label>
-    <input id="email" name="email" required type="email" class="form-input" />
+                <label class="form-label" for="email">E-MAIL:</label>
+                <input id="email" name="email" required type="email" class="form-input" />
 
-    <label class="form-label" for="message">MESSAGE:</label>
-    <textarea id="message" name="message" required class="form-textarea"></textarea>
+                <label class="form-label" for="message">MESSAGE:</label>
+                <textarea id="message" name="message" required class="form-textarea"></textarea>
 
-    <!-- Casilla de Aceptación Obligatoria (RGPD) con Icono Personalizado -->
-    <div class="privacy-consent" style="margin: 15px 0;">
-        <label class="custom-checkbox-container">
-            <input type="checkbox" name="privacy_policy" value="accepted" required>
-            <span class="custom-checkmark"></span>
-            <span class="checkbox-label-text">
-                He leído y acepto la <a href="privacy.html" target="_blank">Política de Privacidad</a> / I have read and accept the <a href="privacy.html" target="_blank">Privacy Policy</a>.
-            </span>
-        </label>
-    </div>
+                <!-- Casilla de Aceptación Obligatoria (RGPD) con Icono Personalizado -->
+                <div class="privacy-consent" style="margin: 15px 0;">
+                    <label class="custom-checkbox-container">
+                        <input type="checkbox" name="privacy_policy" value="accepted" required>
+                        <span class="custom-checkmark"></span>
+                        <span class="checkbox-label-text">
+                            He leído y acepto la <a href="privacy.html" target="_blank">Política de Privacidad</a> / I have read and accept the <a href="privacy.html" target="_blank">Privacy Policy</a>.
+                        </span>
+                    </label>
+                </div>
 
-    <div class="btn-container">
-        <button type="submit" class="send-btn">SEND*</button>
-    </div>
+                <div class="btn-container">
+                    <button type="submit" class="send-btn">SEND*</button>
+                </div>
 
-  <!-- Primera capa de información legal (RGPD España / UE) -->
-<div class="disclaimer-text" style="margin-top: 15px; font-size: 10px; line-height: 1.4; color: #444;">
-    <p style="margin-bottom: 8px;">
-        <strong>Información básica de protección de datos:</strong> <strong>Responsable:</strong> Elezan. <strong>Finalidad:</strong> Responder a tu consulta y gestionar el contacto. <strong>Legitimación:</strong> Consentimiento del interesado. <strong>Encargado del tratamiento:</strong> Formspree Inc. <strong>Derechos:</strong> Puedes acceder, rectificar o suprimir tus datos solicitándolo a través de esta web. Más información en la <a href="privacy.html" style="color: #000; text-decoration: underline;">Política de Privacidad</a>.
-    </p>
-    <p style="margin: 0;">
-        Al enviar, consientes el uso de tu nombre y correo para responder a tu mensaje. Asimismo, te haces responsable de su contenido conforme a la ley si procede. / By submitting, you consent to the use of your name and email to respond to your message. Likewise, you accept responsibility for its content under the law where applicable.
-    </p>
-</div>
-</form>
+                <!-- Primera capa de información legal limpia -->
+                <div class="disclaimer-text">
+                    <p>
+                        <strong>Información básica de protección de datos:</strong> <strong>Responsable:</strong> Elezan. <strong>Finalidad:</strong> Responder a tu consulta y gestionar el contacto. <strong>Legitimación:</strong> Consentimiento del interesado. <strong>Encargado del tratamiento:</strong> Formspree Inc. <strong>Derechos:</strong> Puedes acceder, rectificar o suprimir tus datos solicitándolo a través de esta web. Más información en la <a href="privacy.html">Política de Privacidad</a>.
+                    </p>
+                    <p>
+                        Al enviar, consientes el uso de tu nombre y correo para responder a tu mensaje. Asimismo, te haces responsable de su contenido conforme a la ley si procede. / By submitting, you consent to the use of your name and email to respond to your message. Likewise, you accept responsibility for its content under the law where applicable.
+                    </p>
+                </div>
+            </form>
 
             <!-- Redes Sociales Abajo -->
             <nav class="social-row">

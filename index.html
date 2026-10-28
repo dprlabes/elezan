@@ -7,8 +7,127 @@
     <title>Elezan</title>
     <meta name="description" content="Daniel Elezan @elezanes Painter, illustrator and designer">
     
-    <!-- Enlace a tu CSS -->
+    <!-- Enlace a tu CSS general -->
     <link rel="stylesheet" href="styles.css">
+
+    <style>
+        /* --- ESTILOS GENERALES Y DE FONDO --- */
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            transition: background-image 1s ease-in-out;
+        }
+
+        /* Control de carga inicial */
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #content {
+            opacity: 1;
+            visibility: visible;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* --- MENÚ CENTRADO EN ESCRITORIO --- */
+        .menu-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .art-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .hover-effect {
+            position: relative;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .button-img {
+            display: block;
+            height: auto;
+            max-width: 100%;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: auto;
+        }
+
+        /* Capa superior (subrayado) alineada encima */
+        .hover-effect img.top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            visibility: hidden;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: auto;
+        }
+
+        /* Efecto Hover limpio */
+        .hover-effect:hover img.top {
+            visibility: visible;
+        }
+
+        .hover-effect:hover img:first-child {
+            visibility: hidden;
+        }
+
+        /* --- 1. CONFIGURACIÓN TABLETS (IPAD) --- */
+        @media (min-width: 601px) and (max-width: 1024px) {
+            .menu-container { padding: 20px 10px; }
+            .art-menu { width: 100%; gap: 18px; }
+            .hover-effect { display: block; width: 100%; text-align: center; }
+
+            .btn-art { width: 85% !important; max-width: 580px !important; margin: 0 auto !important; }
+            .btn-commercial { width: 95% !important; max-width: 680px !important; margin: 0 auto !important; }
+            .btn-contact { width: 70% !important; max-width: 480px !important; margin: 0 auto !important; }
+            .btn-info { width: 38% !important; max-width: 260px !important; margin: 0 auto !important; }
+
+            .hover-effect.art-box img.top { width: 85% !important; max-width: 580px !important; left: 50% !important; transform: translateX(-50%) !important; }
+            .hover-effect.commercial-box img.top { width: 95% !important; max-width: 680px !important; left: 50% !important; transform: translateX(-50%) !important; }
+            .hover-effect.contact-box img.top { width: 70% !important; max-width: 480px !important; left: 50% !important; transform: translateX(-50%) !important; }
+            .hover-effect.info-box img.top { width: 38% !important; max-width: 260px !important; left: 50% !important; transform: translateX(-50%) !important; }
+            
+            .hover-effect img.top { position: absolute; top: 0; height: auto !important; }
+        }
+
+        /* --- 2. CONFIGURACIÓN MÓVILES (IPHONE) --- */
+        @media (max-width: 600px) {
+            .menu-container { padding: 20px 12px; }
+            .art-menu { width: 100%; gap: 15px; }
+            .hover-effect { display: block; width: 100%; text-align: center; }
+
+            .btn-art { width: 85% !important; max-width: 360px !important; margin: 0 auto !important; }
+            .btn-commercial { width: 95% !important; max-width: 420px !important; margin: 0 auto !important; }
+            .btn-contact { width: 70% !important; max-width: 300px !important; margin: 0 auto !important; }
+            .btn-info { width: 38% !important; max-width: 150px !important; margin: 0 auto !important; }
+
+            .hover-effect.art-box img.top { width: 85% !important; max-width: 360px !important; left: 50% !important; transform: translateX(-50%) !important; }
+            .hover-effect.commercial-box img.top { width: 95% !important; max-width: 420px !important; left: 50% !important; transform: translateX(-50%) !important; }
+            .hover-effect.contact-box img.top { width: 70% !important; max-width: 300px !important; left: 50% !important; transform: translateX(-50%) !important; }
+            .hover-effect.info-box img.top { width: 38% !important; max-width: 150px !important; left: 50% !important; transform: translateX(-50%) !important; }
+            
+            .hover-effect img.top { position: absolute; top: 0; height: auto !important; }
+        }
+    </style>
 </head>
 <body>
 
@@ -19,27 +138,27 @@
             <nav class="art-menu">
                 
                 <!-- ART WORKS -->
-                <a class="hover-effect" href="artworks.html">
-                    <img alt="Art Works" class="button-img" src="artworks.webp" />
-                    <img alt="Art Works Subrayado" class="button-img top" src="artworks-s.webp" />
+                <a class="hover-effect art-box" href="artworks.html">
+                    <img alt="Art Works" class="button-img btn-art" src="artworks.webp" />
+                    <img alt="Art Works Subrayado" class="button-img top btn-art" src="artworks-s.webp" />
                 </a>
 
                 <!-- COMMERCIAL WORKS -->
-                <a class="hover-effect" href="">
-                    <img alt="Commercial Works" class="button-img" src="comercialworks.webp" />
-                    <img alt="Commercial Works Subrayado" class="button-img top" src="comercialworks-s.webp" />
+                <a class="hover-effect commercial-box" href="">
+                    <img alt="Commercial Works" class="button-img btn-commercial" src="comercialworks.webp" />
+                    <img alt="Commercial Works Subrayado" class="button-img top btn-commercial" src="comercialworks-s.webp" />
                 </a>
 
                 <!-- CONTACT -->
-                <a class="hover-effect" href="contact.html">
-                    <img alt="Contact" class="button-img" src="contact.webp" />
-                    <img alt="Contact Subrayado" class="button-img top" src="contact-s.webp" />
+                <a class="hover-effect contact-box" href="contact.html">
+                    <img alt="Contact" class="button-img btn-contact" src="contact.webp" />
+                    <img alt="Contact Subrayado" class="button-img top btn-contact" src="contact-s.webp" />
                 </a>
 
                 <!-- INFO -->
-                <a class="hover-effect" href="info.html">
-                    <img alt="Info" class="button-img" src="info.webp" />
-                    <img alt="Info Subrayado" class="button-img top" src="info-s.webp" />
+                <a class="hover-effect info-box" href="info.html">
+                    <img alt="Info" class="button-img btn-info" src="info.webp" />
+                    <img alt="Info Subrayado" class="button-img top btn-info" src="info-s.webp" />
                 </a>
 
             </nav>
@@ -47,81 +166,47 @@
 
     </div>
 
-    <!-- Script de carga inicial y cambio de fondo -->
+    <!-- Script optimizado: Precarga menús y fondos, y gestiona el cambio cada 10s -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const images = document.images;
-            let loadedImages = 0;
-            const totalImages = images.length;
+            // Imágenes del menú y fondos a precargar
+            const menuImages = Array.from(document.images).map(img => img.src);
+            const backgrounds = ['webfondo1.jpg', 'webfondo2.jpg'];
+            const allSources = [...menuImages, ...backgrounds];
+            
+            let loadedCount = 0;
+            const totalAssets = allSources.length;
 
-            function imageLoaded() {
-                loadedImages++;
-                if (loadedImages === totalImages) {
+            function assetLoaded() {
+                loadedCount++;
+                if (loadedCount >= totalAssets) {
                     document.getElementById('content').classList.remove('hidden');
                 }
             }
 
-            if (totalImages === 0) {
+            if (totalAssets === 0) {
                 document.getElementById('content').classList.remove('hidden');
             } else {
-                for (let i = 0; i < totalImages; i++) {
-                    const tempImage = new Image();
-                    tempImage.src = images[i].src;
-                    tempImage.onload = imageLoaded;
-                    tempImage.onerror = imageLoaded;
-                }
-            }
-        });
-
-        // Array con las imágenes de fondo exactas de tu carpeta
-        const backgrounds = [
-            'webfondo1.jpg', 
-            'webfondo2.jpg'
-        ];
-
-        let currentIndex = Math.floor(Math.random() * backgrounds.length);
-
-        backgrounds.forEach((url) => {
-            const img = new Image();
-            img.src = url;
-        });
-
-        function changeBackground() {
-            document.body.style.backgroundImage = `url('${backgrounds[currentIndex]}')`;
-            currentIndex = (currentIndex + 1) % backgrounds.length;
-        }
-
-        changeBackground();
-        setInterval(changeBackground, 10000);
-    </script>
-
-
-
-<!-- Script de carga inicial limpia -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const images = document.images;
-            let loadedImages = 0;
-            const totalImages = images.length;
-
-            function imageLoaded() {
-                loadedImages++;
-                if (loadedImages === totalImages) {
-                    document.getElementById('content').classList.remove('hidden');
-                }
+                allSources.forEach(src => {
+                    const tempImg = new Image();
+                    tempImg.src = src;
+                    tempImg.onload = assetLoaded;
+                    tempImg.onerror = assetLoaded; // Evita que se quede colgado si falla alguna
+                });
             }
 
-            if (totalImages === 0) {
-                document.getElementById('content').classList.remove('hidden');
-            } else {
-                for (let i = 0; i < totalImages; i++) {
-                    const tempImage = new Image();
-                    tempImage.src = images[i].src;
-                    tempImage.onload = imageLoaded;
-                    tempImage.onerror = imageLoaded;
-                }
+            // Rotación de fondos cada 10 segundos
+            let currentIndex = Math.floor(Math.random() * backgrounds.length);
+
+            function changeBackground() {
+                document.body.style.backgroundImage = `url('${backgrounds[currentIndex]}')`;
+                currentIndex = (currentIndex + 1) % backgrounds.length;
             }
+
+            changeBackground();
+            setInterval(changeBackground, 10000);
         });
     </script>
+
 </body>
 </html>
