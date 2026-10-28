@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elezan - Artworks</title>
+    <meta name="description" content="Daniel Elezan @elezanes Artworks and Portfolio">
+    
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        /* Fondo de nubes idéntico al de Info */
+        body.artworks-page {
+            background-image: url('fondoagua.gif');
+            margin: 0;
+            padding: 0;
+        }
+
+        .artworks-wrapper {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+            box-sizing: border-box;
+        }
+
+        /* GALERÍA COLLAGE MASONRY COMPACTA */
+        .gallery-masonry {
+            column-count: 3;
+            column-gap: 0px;
+            width: 100%;
+        }
+
+        @media (max-width: 900px) {
+            .gallery-masonry {
+                column-count: 2;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .gallery-masonry {
+                column-count: 1;
+            }
+        }
+
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 0px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.01);
+            opacity: 0.95;
+        }
+
+        /* VENTANA FLOTANTE (LIGHTBOX MODAL) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-container {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            user-select: none;
+        }
+
+        .modal-image-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-container img {
+            max-width: 80vw;
+            max-height: 75vh;
+            object-fit: contain;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            display: block;
+            /* Se permite el comportamiento nativo de arrastre de la imagen */
+            user-drag: element;
+            -webkit-user-drag: element;
+        }
+
+        /* FLECHAS FIJAS EN LOS ESPACIOS LATERALES */
+        .arrow-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            color: #000;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #000;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1100;
+            user-select: none;
+            padding: 0;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .arrow-btn:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .arrow-prev { 
+            left: 20px; 
+        }
+
+        .arrow-next { 
+            right: 20px; 
+        }
+
+        /* BOTÓN DE CIERRE */
+        .close-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            color: #000;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #000;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1100;
+            user-select: none;
+            padding: 0;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        /* CAJA DE DESCRIPCIÓN (mantiene su fondo blanco) */
+        .modal-caption {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            padding: 8px 18px;
+            margin-top: 12px;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+            display: inline-block;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        /* CONTENEDOR DE PUNTOS REDONDOS (SIN FONDO BLANCO) */
+        .modal-dots {
+            display: inline-flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 8px;
+            background: transparent;
+            padding: 4px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 1px solid #000;
+            background: transparent;
+            transition: background 0.2s;
+            display: inline-block;
+        }
+
+        .dot.active {
+            background: #000;
+        }
+    </style>
+</head>
+<body class="artworks-page">
+
+    <div id="content">
+        <main class="artworks-wrapper">
+            
+            <!-- PORTADAS DE PROYECTOS / OBRAS EN LA GALERÍA -->
+            <div class="gallery-masonry">
+                
+                <div class="gallery-item" onclick="openProject('eiuvbpweriubp')">
+                    <img src="artworks/rrss-eiuvbpweriubp.png" alt="Artwork" onerror="this.src='artworks/rrss-eiuvbpweriubp....png'">
+                </div>
+
+                <div class="gallery-item" onclick="openProject('wrb4rb1')">
+                    <img src="artworks/rrss-wrb4rb1.png" alt="Artwork">
+                </div>
+
+                <div class="gallery-item" onclick="openProject('vevwerqr1')">
+                    <img src="artworks/rrss-vevwerqr1.png" alt="Artwork">
+                </div>
+
+                <div class="gallery-item" onclick="openProject('asviafdv')">
+                    <img src="artworks/retrato-asviafdv.png" alt="Artwork">
+                </div>
+
+                <div class="gallery-item" onclick="openProject('sdviuguvif')">
+                    <img src="artworks/rrss-sdviuguvif.png" alt="Artwork">
+                </div>
+
+                <div class="gallery-item" onclick="openProject('dpviuejvbv')">
+                    <img src="artworks/rrss-dpviuejvbv.png" alt="Artwork">
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- VENTANA FLOTANTE / MODAL LIGHTBOX CON CARRUSEL -->
+    <div class="modal-overlay" id="imageModal" onclick="closeModalOnOuterClick(event)">
+        <div class="modal-container" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal(event)">&times;</button>
+            
+            <div class="modal-image-wrapper">
+                <button class="arrow-btn arrow-prev" id="prevBtn" onclick="navigateProject(-1, event)">&#10094;</button>
+                <img id="modalImg" src="" alt="Enlarged Artwork" onclick="navigateProject(1, event)">
+                <button class="arrow-btn arrow-next" id="nextBtn" onclick="navigateProject(1, event)">&#10095;</button>
+            </div>
+            
+            <!-- DESCRIPCIÓN Y CÍRCULOS SEPARADOS -->
+            <p id="modalCaption" class="modal-caption"></p>
+            <div id="modalDotsContainer" class="modal-dots"></div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE LÓGICA DE PROYECTOS Y NAVEGACIÓN -->
+    <script>
+       const projects = {
+            'eiuvbpweriubp': {
+                caption: 'Bodegón Jerezano. Pintura mural. 24',
+                images: [
+                    'artworks/rrss-eiuvbpweriubp.png',
+                    'artworks/rrss-wefwe1.png',
+                    'artworks/rrss-ldvbdfjedfv.png',
+                    'artworks/rrss-eovernver.png'
+                ]
+            },
+            'wrb4rb1': {
+                caption: 'Figuras. Dibujos en estudio. 24',
+                images: [
+                    'artworks/rrss-wrb4rb1.png',
+                    'artworks/rrss-everfg1.png'
+                ]
+            },
+            'vevwerqr1': {
+                caption: 'Retratos. Dibujos en estudio. 24',
+                images: [
+                    'artworks/rrss-vevwerqr1.png'
+                ]
+            },
+            'asviafdv': {
+                caption: 'Retrato. Impresión digital. 23',
+                images: [
+                    'artworks/retrato-asviafdv.png',
+                    'artworks/rrss-e08v7erewro.png'
+                ]
+            },
+            'sdviuguvif': {
+                caption: 'Cráneos. Grabados en punta seca. 17',
+                images: [
+                    'artworks/rrss-sdviuguvif.png',
+                    'artworks/rrss-dfijvbdwjvdf.png'
+                ]
+            },
+            'dpviuejvbv': {
+                caption: 'Ruinas. Grabado en aguafuerte. 15',
+                images: [
+                    'artworks/rrss-dpviuejvbv.png',
+                    'artworks/rrss-ivjdvfvdf4.png'
+                ]
+            }
+        };
+
+        let currentProjectKey = '';
+        let currentImageIndex = 0;
+
+        function openProject(projectKey) {
+            currentProjectKey = projectKey;
+            currentImageIndex = 0;
+
+            updateModalContent();
+
+            const modal = document.getElementById('imageModal');
+            modal.classList.add('active');
+        }
+
+        function updateModalContent() {
+            const project = projects[currentProjectKey];
+            const modalImg = document.getElementById('modalImg');
+            const modalCaption = document.getElementById('modalCaption');
+            const modalDotsContainer = document.getElementById('modalDotsContainer');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            modalImg.src = project.images[currentImageIndex];
+
+            // 1. Mostrar texto de descripción
+            if (project.caption) {
+                modalCaption.textContent = project.caption;
+                modalCaption.style.display = 'inline-block';
+            } else {
+                modalCaption.style.display = 'none';
+            }
+
+            // 2. Generar círculos abajo solo si hay más de 1 imagen
+            modalDotsContainer.innerHTML = '';
+            if (project.images.length > 1) {
+                project.images.forEach((_, index) => {
+                    const dot = document.createElement('span');
+                    dot.classList.add('dot');
+                    if (index === currentImageIndex) {
+                        dot.classList.add('active');
+                    }
+                    modalDotsContainer.appendChild(dot);
+                });
+                modalDotsContainer.style.display = 'inline-flex';
+                prevBtn.style.display = 'flex';
+                nextBtn.style.display = 'flex';
+            } else {
+                modalDotsContainer.style.display = 'none';
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            }
+        }
+
+        function navigateProject(direction, event) {
+            if (event) event.stopPropagation();
+            const project = projects[currentProjectKey];
+            
+            currentImageIndex += direction;
+            
+            if (currentImageIndex < 0) {
+                currentImageIndex = project.images.length - 1;
+            } else if (currentImageIndex >= project.images.length) {
+                currentImageIndex = 0;
+            }
+
+            updateModalContent();
+        }
+
+        function closeModal(event) {
+            if (event) event.stopPropagation();
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+        }
+
+        function closeModalOnOuterClick(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                closeModal();
+            }
+        }
+
+        document.addEventListener('keydown', function(event) {
+            const modal = document.getElementById('imageModal');
+            if (modal.classList.contains('active')) {
+                const currentList = projects[currentProjectKey].images;
+                if (event.key === 'ArrowLeft' && currentList.length > 1) {
+                    navigateProject(-1);
+                } else if (event.key === 'ArrowRight' && currentList.length > 1) {
+                    navigateProject(1);
+                } else if (event.key === 'Escape') {
+                    closeModal();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
