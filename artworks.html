@@ -62,13 +62,13 @@
         .artworks-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 2px; /* Margen constante de 2px */
+            gap: 2px;
             width: 100%;
             align-items: flex-start;
         }
 
         .grid-item {
-            flex: 1 1 calc(33.333% - 1.34px); /* Cálculo exacto proporcional al gap de 2px */
+            flex: 1 1 calc(33.333% - 1.34px);
             max-width: calc(33.333% - 1.34px);
             cursor: pointer;
             overflow: visible !important;
@@ -89,14 +89,14 @@
             z-index: 5;
         }
 
-       /* 4. MODAL / CARRUSEL FLOTANTE */
+        /* 4. MODAL / CARRUSEL FLOTANTE */
         .modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: none;
+            background: rgba(0, 0, 0, 0.3); /* Fondo ligeramente oscuro para que sea intuitivo cerrar al hacer clic */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -123,35 +123,52 @@
             justify-content: center;
         }
 
+        /* Ventana contenedora principal */
         .modal-img-container {
+            width: min(1080px, 95vw);
+            max-height: calc(95vh - 50px);
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            cursor: grab;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-img-container:active {
+            cursor: grabbing;
+        }
+
+        /* Tira horizontal deslizable */
+        .carousel-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            will-change: transform;
+        }
+
+        .carousel-slide {
+            flex: 0 0 100%;
             width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            cursor: pointer;
-            overflow: hidden;
+            user-select: none;
         }
 
-       .img-wrapper {
-            position: relative;
-            display: inline-block;
-            max-width: min(1080px, 100vw);  /* Garantiza que NUNCA supere el ancho de pantalla */
-            max-height: min(1080px, 100vh); /* Garantiza que deje espacio vertical para la barra y los puntos */
-        }
-
-        .modal-img-container img {
-            max-width: min(1080px, 100vw);  /* Se ajusta a lo ancho si la ventana es estrecha */
-            max-height: min(1080px, 100vh); /* Se ajusta a lo alto si la ventana es bajita */
+        .carousel-slide img {
+            max-width: min(1080px, 95vw);
+            max-height: calc(95vh - 50px);
             width: auto;
             height: auto;
             object-fit: contain;
             display: block;
             user-select: none;
+            pointer-events: none;
         }
 
-        /* Franja blanca inferior con descripción a la izquierda y enlace a la derecha */
+        /* Franja blanca inferior adaptada exactamente a la foto activa */
         .modal-info-bar {
-            width: 100%;
             background: #ffffff;
             color: #000000;
             padding: 10px 15px;
@@ -159,10 +176,15 @@
             justify-content: space-between;
             align-items: center;
             font-size: 12px;
+            box-sizing: border-box;
+            z-index: 10;
         }
 
         .modal-desc {
             font-weight: 480;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .download-link {
@@ -232,26 +254,26 @@
 
     <!-- ESTRUCTURA DEL MODAL CARRUSEL -->
     <div class="modal" id="carouselModal">
-        <div class="modal-container">
+        <div class="modal-container" id="modalContainer">
             <div class="modal-img-container" id="modalImgContainer">
-                <div class="img-wrapper">
-                    <img src="" alt="Artwork Large" id="modalImg">
+                <div class="carousel-track" id="carouselTrack">
+                    <!-- Las diapositivas se generan dinámicamente -->
                 </div>
             </div>
 
-            <div class="modal-info-bar">
+            <div class="modal-info-bar" id="modalInfoBar">
                 <span class="modal-desc" id="modalDesc">Detalle</span>
                 <a href="#" target="_blank" rel="noopener noreferrer" id="downloadBtn" class="download-link">Open</a>
             </div>
 
             <!-- Barra inferior con círculos dinámicos -->
             <div class="modal-nav-bar" id="modalNavBar">
-                <!-- Se generan automáticamente desde JavaScript según el nº de fotos -->
+                <!-- Se generan automáticamente según el nº de fotos -->
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT DE GALERÍA Y CONTROLES DEL CARRUSEL -->
+    <!-- SCRIPT DE GALERÍA Y CONTROLES -->
     <script>
         const projects = [
             {
@@ -285,12 +307,14 @@
 
         const galleryGrid = document.getElementById('galleryGrid');
         const modal = document.getElementById('carouselModal');
-        const modalImg = document.getElementById('modalImg');
+        const modalImgContainer = document.getElementById('modalImgContainer');
+        const carouselTrack = document.getElementById('carouselTrack');
+        const modalInfoBar = document.getElementById('modalInfoBar');
         const modalDesc = document.getElementById('modalDesc');
         const downloadBtn = document.getElementById('downloadBtn');
         const modalNavBar = document.getElementById('modalNavBar');
 
-        // Renderizar respetando el orden cronológico en mosaico
+        // Renderizar portadas en collage
         projects.forEach((proj, pIndex) => {
             const coverImg = proj.images[0];
             const item = document.createElement('div');
@@ -303,8 +327,14 @@
         function openCarousel(projIdx, imgIdx) {
             currentProjectIndex = projIdx;
             currentImageIndex = imgIdx;
+            buildSlides();
             buildDots();
-            updateModalContent();
+            
+            setTimeout(() => {
+                updateTrackPosition(false);
+                updateInfoBar();
+            }, 10);
+
             modal.classList.add('active');
         }
 
@@ -312,7 +342,28 @@
             modal.classList.remove('active');
         }
 
-        // Construir los círculos según el número de imágenes de la obra actual
+        function buildSlides() {
+            carouselTrack.innerHTML = '';
+            const currentProj = projects[currentProjectIndex];
+            
+            currentProj.images.forEach((imgName, idx) => {
+                const slide = document.createElement('div');
+                slide.className = 'carousel-slide';
+                const img = document.createElement('img');
+                img.src = `artworks/${imgName}`;
+                img.alt = "Artwork Large";
+                
+                img.onload = () => {
+                    if (idx === currentImageIndex) {
+                        updateInfoBar();
+                    }
+                };
+
+                slide.appendChild(img);
+                carouselTrack.appendChild(slide);
+            });
+        }
+
         function buildDots() {
             modalNavBar.innerHTML = '';
             const currentProj = projects[currentProjectIndex];
@@ -330,21 +381,44 @@
                 dot.onclick = (e) => {
                     e.stopPropagation();
                     currentImageIndex = idx;
-                    updateModalContent();
+                    updateTrackPosition(true);
+                    updateInfoBar();
                 };
                 modalNavBar.appendChild(dot);
             });
         }
 
-        function updateModalContent() {
+        function updateTrackPosition(animate = true) {
+            const containerWidth = modalImgContainer.offsetWidth;
+            const targetX = -currentImageIndex * containerWidth;
+
+            if (animate) {
+                carouselTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+            } else {
+                carouselTrack.style.transition = 'none';
+            }
+
+            carouselTrack.style.transform = `translateX(${targetX}px)`;
+            updateDotsUI();
+        }
+
+        function updateInfoBar() {
             const currentProj = projects[currentProjectIndex];
-            const imgSrc = `artworks/${currentProj.images[currentImageIndex]}`;
-            modalImg.src = imgSrc;
+            const slides = carouselTrack.querySelectorAll('.carousel-slide');
             
+            if (slides[currentImageIndex]) {
+                const imgElement = slides[currentImageIndex].querySelector('img');
+                if (imgElement && imgElement.offsetWidth > 0) {
+                    modalInfoBar.style.width = imgElement.offsetWidth + 'px';
+                }
+            }
+
+            const imgSrc = `artworks/${currentProj.images[currentImageIndex]}`;
             modalDesc.textContent = currentProj.title;
             downloadBtn.href = imgSrc;
+        }
 
-            // Actualizar el estado activo de los círculos
+        function updateDotsUI() {
             const dots = modalNavBar.querySelectorAll('.dot');
             dots.forEach((dot, idx) => {
                 if (idx === currentImageIndex) {
@@ -355,86 +429,149 @@
             });
         }
 
-        function nextImage() {
+        function nextImage(animate = true) {
             const currentProj = projects[currentProjectIndex];
+            if (currentProj.images.length <= 1) return;
             currentImageIndex = (currentImageIndex + 1) % currentProj.images.length;
-            updateModalContent();
+            updateTrackPosition(animate);
+            updateInfoBar();
         }
 
-        function prevImage() {
+        function prevImage(animate = true) {
             const currentProj = projects[currentProjectIndex];
+            if (currentProj.images.length <= 1) return;
             currentImageIndex = (currentImageIndex - 1 + currentProj.images.length) % currentProj.images.length;
-            updateModalContent();
+            updateTrackPosition(animate);
+            updateInfoBar();
         }
 
-        // Eventos
-        document.getElementById('modalImgContainer').onclick = nextImage;
+        // FÍSICA DE ARRASTRE vs CLIC DENTRO
+        let startX = 0;
+        let currentTranslate = 0;
+        let isDragging = false;
+        let hasMoved = false;
 
-        // Clic fuera del modal para cerrar
+        function handleStart(clientX) {
+            isDragging = true;
+            hasMoved = false;
+            startX = clientX;
+
+            const containerWidth = modalImgContainer.offsetWidth;
+            currentTranslate = -currentImageIndex * containerWidth;
+
+            carouselTrack.style.transition = 'none';
+        }
+
+        function handleMove(clientX) {
+            if (!isDragging) return;
+            const diffX = clientX - startX;
+            
+            // Umbral de 5px para saber si el usuario está arrastrando realmente
+            if (Math.abs(diffX) > 5) {
+                hasMoved = true;
+                carouselTrack.style.transform = `translateX(${currentTranslate + diffX}px)`;
+            }
+        }
+
+        function handleEnd(clientX) {
+            if (!isDragging) return;
+            isDragging = false;
+
+            const containerWidth = modalImgContainer.offsetWidth;
+
+            // SI ES UN CLIC SIMPLE DENTRO DE LA IMAGEN (sin arrastre) -> CAMBIA INSTANTÁNEAMENTE SIN ANIMACIÓN
+            if (!hasMoved) {
+                nextImage(false);
+                return;
+            }
+
+            // SI FUE UN ARRASTRE CON DEDO O RATÓN -> SE APLICA LA ANIMACIÓN FLUIDA
+            const diffX = clientX - startX;
+            const currentProj = projects[currentProjectIndex];
+
+            if (diffX < -containerWidth * 0.15 && currentImageIndex < currentProj.images.length - 1) {
+                currentImageIndex++;
+            } else if (diffX > containerWidth * 0.15 && currentImageIndex > 0) {
+                currentImageIndex--;
+            }
+
+            updateTrackPosition(true);
+            updateInfoBar();
+        }
+
+        // Eventos Táctiles (Móvil)
+        modalImgContainer.addEventListener('touchstart', (e) => handleStart(e.touches[0].clientX));
+        modalImgContainer.addEventListener('touchmove', (e) => handleMove(e.touches[0].clientX));
+        modalImgContainer.addEventListener('touchend', (e) => handleEnd(e.changedTouches[0].clientX));
+
+        // Eventos de Ratón (Escritorio)
+        modalImgContainer.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            handleStart(e.clientX);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isDragging) handleMove(e.clientX);
+        });
+
+        window.addEventListener('mouseup', (e) => {
+            if (isDragging) handleEnd(e.clientX);
+        });
+
+        // CIERRE EXCLUSIVO AL HACER CLIC FUERA DE LA IMAGEN Y SU CONTENIDO
         modal.onclick = (e) => {
-            if (e.target === modal) closeModal();
+            // Si el clic es directamente en el fondo del modal (fuera del contenedor de la imagen o los puntos)
+            if (e.target === modal) {
+                closeModal();
+            }
         };
 
-        // Control por teclado
+        // Teclado
         document.addEventListener('keydown', (e) => {
             if (!modal.classList.contains('active')) return;
-            if (e.key === 'ArrowRight') nextImage();
-            if (e.key === 'ArrowLeft') prevImage();
+            if (e.key === 'ArrowRight') nextImage(true);
+            if (e.key === 'ArrowLeft') prevImage(true);
             if (e.key === 'Escape') closeModal();
         });
 
-        // Control por gestos Swipe en Móvil
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        modal.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
-
-        modal.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        });
-
-        function handleSwipe() {
-            if (touchEndX < touchStartX - 40) nextImage();
-            if (touchEndX > touchStartX + 40) prevImage();
-        }
-
-       // CONTROL DE PRECARGA REAL DE IMÁGENES
+        // PRECARGA INTELIGENTE
         document.addEventListener("DOMContentLoaded", function() {
             const contentDiv = document.getElementById('content');
             
-            // Recopilamos todas las rutas de imágenes que queremos precargar
-            // (Incluimos el fondo y las portadas de la galería)
-            const imagesToPreload = [
+            const criticalImages = [
                 'artworks/fondoagua.gif',
                 ...projects.map(proj => `artworks/${proj.images[0]}`)
             ];
 
-            let loadedCount = 0;
-            const totalImages = imagesToPreload.length;
+            const secondaryImages = projects.flatMap(proj => proj.images.slice(1).map(img => `artworks/${img}`));
 
-            if (totalImages === 0) {
+            let loadedCount = 0;
+            const totalCritical = criticalImages.length;
+
+            if (totalCritical === 0) {
                 contentDiv.classList.remove('hidden');
                 return;
             }
 
-            // Función que comprueba si ya se han descargado todas
-            function imageLoaded() {
-                loadedCount++;
-                if (loadedCount === totalImages) {
-                    // Una vez que están todas en caché, mostramos la web de golpe
-                    contentDiv.classList.remove('hidden');
-                }
-            }
-
-            // Disparamos la carga en segundo plano de cada imagen
-            imagesToPreload.forEach(src => {
+            criticalImages.forEach(src => {
                 const img = new Image();
                 img.src = src;
-                img.onload = imageLoaded;
-                img.onerror = imageLoaded; // Por si alguna falla, para que no se quede bloqueado
+                img.onload = () => {
+                    loadedCount++;
+                    if (loadedCount === totalCritical) {
+                        contentDiv.classList.remove('hidden');
+                        secondaryImages.forEach(secSrc => {
+                            const bgImg = new Image();
+                            bgImg.src = secSrc;
+                        });
+                    }
+                };
+                img.onerror = () => {
+                    loadedCount++;
+                    if (loadedCount === totalCritical) {
+                        contentDiv.classList.remove('hidden');
+                    }
+                };
             });
         });
     </script>
