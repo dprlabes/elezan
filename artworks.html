@@ -89,21 +89,21 @@
             z-index: 5;
         }
 
-        /* 4. MODAL / CARRUSEL FLOTANTE */
+        /* 4. MODAL / CARRUSEL FLOTANTE 100% TRANSPARENTE E INSTANTÁNEO */
         .modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3); /* Fondo ligeramente oscuro para que sea intuitivo cerrar al hacer clic */
+            background: none;
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: none;
         }
 
         .modal.active {
@@ -123,10 +123,20 @@
             justify-content: center;
         }
 
-        /* Ventana contenedora principal */
+        /* Caja unificada que se ajusta exactamente al tamaño de la imagen activa */
+        .modal-content-box {
+            display: flex;
+            flex-direction: column;
+            width: auto;
+            height: auto;
+            max-width: 95vw;
+            max-height: 95vh;
+        }
+
+        /* Ventana contenedora principal adaptativa a la altura de la foto */
         .modal-img-container {
-            width: min(1080px, 95vw);
-            max-height: calc(95vh - 50px);
+            width: 100%;
+            height: auto;
             display: flex;
             justify-content: flex-start;
             align-items: center;
@@ -142,23 +152,22 @@
         /* Tira horizontal deslizable */
         .carousel-track {
             display: flex;
-            width: 100%;
             height: 100%;
             will-change: transform;
         }
 
         .carousel-slide {
-            flex: 0 0 100%;
-            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-shrink: 0;
             user-select: none;
+            height: auto;
         }
 
         .carousel-slide img {
             max-width: min(1080px, 95vw);
-            max-height: calc(95vh - 50px);
+            max-height: calc(95vh - 40px);
             width: auto;
             height: auto;
             object-fit: contain;
@@ -167,11 +176,12 @@
             pointer-events: none;
         }
 
-        /* Franja blanca inferior adaptada exactamente a la foto activa */
+        /* Franja blanca inferior pegada milimétricamente al borde inferior de la imagen */
         .modal-info-bar {
+            width: 100%;
             background: #ffffff;
             color: #000000;
-            padding: 10px 15px;
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -185,6 +195,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            margin-right: 10px;
         }
 
         .download-link {
@@ -202,7 +213,7 @@
             justify-content: center;
             align-items: center;
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 8px;
             width: 100%;
             background: none;
         }
@@ -235,7 +246,8 @@
                 gap: 6px;
             }
             .modal-info-bar {
-                padding: 8px 12px;
+                padding: 6px 10px;
+                font-size: 11px;
             }
         }
     </style>
@@ -255,15 +267,18 @@
     <!-- ESTRUCTURA DEL MODAL CARRUSEL -->
     <div class="modal" id="carouselModal">
         <div class="modal-container" id="modalContainer">
-            <div class="modal-img-container" id="modalImgContainer">
-                <div class="carousel-track" id="carouselTrack">
-                    <!-- Las diapositivas se generan dinámicamente -->
+            <!-- Caja unificada que contiene la imagen y la barra pegadas sin márgenes inferiores -->
+            <div class="modal-content-box" id="modalContentBox">
+                <div class="modal-img-container" id="modalImgContainer">
+                    <div class="carousel-track" id="carouselTrack">
+                        <!-- Las diapositivas se generan dinámicamente -->
+                    </div>
                 </div>
-            </div>
 
-            <div class="modal-info-bar" id="modalInfoBar">
-                <span class="modal-desc" id="modalDesc">Detalle</span>
-                <a href="#" target="_blank" rel="noopener noreferrer" id="downloadBtn" class="download-link">Open</a>
+                <div class="modal-info-bar" id="modalInfoBar">
+                    <span class="modal-desc" id="modalDesc">Detalle</span>
+                    <a href="#" target="_blank" rel="noopener noreferrer" id="downloadBtn" class="download-link">Open</a>
+                </div>
             </div>
 
             <!-- Barra inferior con círculos dinámicos -->
@@ -289,8 +304,8 @@
                 images: ["rrss-wrb4rb1.png", "rrss-everfg1.png"]
             },
             {
-                title: "Retrato de mujer y ornamento. Impresión digital. 23",
-                images: ["rrss-asviafdv.png", "rrss-e08v7erewro.png"]
+                title: "Retrato de mujer. Impresión digital. 23",
+                images: ["rrss-asviafdv.png"]
             },
             {
                 title: "Cráneos. Grabado en punta seca. 17",
@@ -307,6 +322,7 @@
 
         const galleryGrid = document.getElementById('galleryGrid');
         const modal = document.getElementById('carouselModal');
+        const modalContentBox = document.getElementById('modalContentBox');
         const modalImgContainer = document.getElementById('modalImgContainer');
         const carouselTrack = document.getElementById('carouselTrack');
         const modalInfoBar = document.getElementById('modalInfoBar');
@@ -330,12 +346,8 @@
             buildSlides();
             buildDots();
             
-            setTimeout(() => {
-                updateTrackPosition(false);
-                updateInfoBar();
-            }, 10);
-
             modal.classList.add('active');
+            setTimeout(updateLayout, 10);
         }
 
         function closeModal() {
@@ -354,13 +366,27 @@
                 img.alt = "Artwork Large";
                 
                 img.onload = () => {
+                    updateSlideDimensions();
                     if (idx === currentImageIndex) {
-                        updateInfoBar();
+                        updateLayout();
                     }
                 };
 
                 slide.appendChild(img);
                 carouselTrack.appendChild(slide);
+            });
+        }
+
+        function updateSlideDimensions() {
+            const slides = carouselTrack.querySelectorAll('.carousel-slide');
+            slides.forEach(slide => {
+                const img = slide.querySelector('img');
+                if (img && img.getBoundingClientRect().width > 0) {
+                    const w = img.getBoundingClientRect().width;
+                    const h = img.getBoundingClientRect().height;
+                    slide.style.width = w + 'px';
+                    slide.style.height = h + 'px';
+                }
             });
         }
 
@@ -381,41 +407,52 @@
                 dot.onclick = (e) => {
                     e.stopPropagation();
                     currentImageIndex = idx;
-                    updateTrackPosition(true);
-                    updateInfoBar();
+                    updateLayout(true);
                 };
                 modalNavBar.appendChild(dot);
             });
         }
 
-        function updateTrackPosition(animate = true) {
-            const containerWidth = modalImgContainer.offsetWidth;
-            const targetX = -currentImageIndex * containerWidth;
-
-            if (animate) {
-                carouselTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
-            } else {
-                carouselTrack.style.transition = 'none';
-            }
-
-            carouselTrack.style.transform = `translateX(${targetX}px)`;
-            updateDotsUI();
-        }
-
-        function updateInfoBar() {
-            const currentProj = projects[currentProjectIndex];
+        // Función maestra que adapta el ancho y alto exactamente a cada imagen activa
+        function updateLayout(animate = true) {
+            updateSlideDimensions();
             const slides = carouselTrack.querySelectorAll('.carousel-slide');
-            
-            if (slides[currentImageIndex]) {
-                const imgElement = slides[currentImageIndex].querySelector('img');
-                if (imgElement && imgElement.offsetWidth > 0) {
-                    modalInfoBar.style.width = imgElement.offsetWidth + 'px';
+            if (slides.length === 0 || !slides[currentImageIndex]) return;
+
+            const activeSlide = slides[currentImageIndex];
+            const activeImg = activeSlide.querySelector('img');
+            if (!activeImg) return;
+
+            const imgWidth = activeImg.getBoundingClientRect().width;
+            const imgHeight = activeImg.getBoundingClientRect().height;
+
+            if (imgWidth > 0 && imgHeight > 0) {
+                // Ajustamos el contenedor de la imagen y la caja unificada exactamente a las dimensiones de la foto actual
+                modalImgContainer.style.width = imgWidth + 'px';
+                modalImgContainer.style.height = imgHeight + 'px';
+                modalContentBox.style.width = imgWidth + 'px';
+
+                // Posicionamos el carrusel de manera exacta
+                let targetX = 0;
+                for (let i = 0; i < currentImageIndex; i++) {
+                    const prevImg = slides[i].querySelector('img');
+                    targetX += prevImg ? prevImg.getBoundingClientRect().width : imgWidth;
                 }
+
+                if (animate) {
+                    carouselTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+                } else {
+                    carouselTrack.style.transition = 'none';
+                }
+                carouselTrack.style.transform = `translateX(-${targetX}px)`;
             }
 
+            const currentProj = projects[currentProjectIndex];
             const imgSrc = `artworks/${currentProj.images[currentImageIndex]}`;
             modalDesc.textContent = currentProj.title;
             downloadBtn.href = imgSrc;
+
+            updateDotsUI();
         }
 
         function updateDotsUI() {
@@ -433,21 +470,26 @@
             const currentProj = projects[currentProjectIndex];
             if (currentProj.images.length <= 1) return;
             currentImageIndex = (currentImageIndex + 1) % currentProj.images.length;
-            updateTrackPosition(animate);
-            updateInfoBar();
+            updateLayout(animate);
         }
 
         function prevImage(animate = true) {
             const currentProj = projects[currentProjectIndex];
             if (currentProj.images.length <= 1) return;
             currentImageIndex = (currentImageIndex - 1 + currentProj.images.length) % currentProj.images.length;
-            updateTrackPosition(animate);
-            updateInfoBar();
+            updateLayout(animate);
         }
 
-        // FÍSICA DE ARRASTRE vs CLIC DENTRO
+        // Recalcular dimensiones si cambia el tamaño de la ventana
+        window.addEventListener('resize', () => {
+            if (modal.classList.contains('active')) {
+                updateLayout(false);
+            }
+        });
+
+        // CONTROL DE ARRASTRE Y CLIC PRECISO
         let startX = 0;
-        let currentTranslate = 0;
+        let currentTranslateX = 0;
         let isDragging = false;
         let hasMoved = false;
 
@@ -456,8 +498,12 @@
             hasMoved = false;
             startX = clientX;
 
-            const containerWidth = modalImgContainer.offsetWidth;
-            currentTranslate = -currentImageIndex * containerWidth;
+            const slides = carouselTrack.querySelectorAll('.carousel-slide');
+            currentTranslateX = 0;
+            for (let i = 0; i < currentImageIndex; i++) {
+                const img = slides[i].querySelector('img');
+                currentTranslateX += img ? img.getBoundingClientRect().width : 0;
+            }
 
             carouselTrack.style.transition = 'none';
         }
@@ -466,10 +512,9 @@
             if (!isDragging) return;
             const diffX = clientX - startX;
             
-            // Umbral de 5px para saber si el usuario está arrastrando realmente
-            if (Math.abs(diffX) > 5) {
+            if (Math.abs(diffX) > 8) {
                 hasMoved = true;
-                carouselTrack.style.transform = `translateX(${currentTranslate + diffX}px)`;
+                carouselTrack.style.transform = `translateX(${-currentTranslateX + diffX}px)`;
             }
         }
 
@@ -477,26 +522,27 @@
             if (!isDragging) return;
             isDragging = false;
 
-            const containerWidth = modalImgContainer.offsetWidth;
+            const slides = carouselTrack.querySelectorAll('.carousel-slide');
+            if (slides.length === 0) return;
+            
+            const activeImg = slides[currentImageIndex].querySelector('img');
+            const slideWidth = activeImg ? activeImg.getBoundingClientRect().width : 300;
 
-            // SI ES UN CLIC SIMPLE DENTRO DE LA IMAGEN (sin arrastre) -> CAMBIA INSTANTÁNEAMENTE SIN ANIMACIÓN
             if (!hasMoved) {
-                nextImage(false);
+                nextImage(false); // Clic estático simple dentro de la imagen cambia al instante sin animación
                 return;
             }
 
-            // SI FUE UN ARRASTRE CON DEDO O RATÓN -> SE APLICA LA ANIMACIÓN FLUIDA
             const diffX = clientX - startX;
             const currentProj = projects[currentProjectIndex];
 
-            if (diffX < -containerWidth * 0.15 && currentImageIndex < currentProj.images.length - 1) {
+            if (diffX < -slideWidth * 0.15 && currentImageIndex < currentProj.images.length - 1) {
                 currentImageIndex++;
-            } else if (diffX > containerWidth * 0.15 && currentImageIndex > 0) {
+            } else if (diffX > slideWidth * 0.15 && currentImageIndex > 0) {
                 currentImageIndex--;
             }
 
-            updateTrackPosition(true);
-            updateInfoBar();
+            updateLayout(true);
         }
 
         // Eventos Táctiles (Móvil)
@@ -518,9 +564,8 @@
             if (isDragging) handleEnd(e.clientX);
         });
 
-        // CIERRE EXCLUSIVO AL HACER CLIC FUERA DE LA IMAGEN Y SU CONTENIDO
+        // CIERRE AL HACER CLIC FUERA
         modal.onclick = (e) => {
-            // Si el clic es directamente en el fondo del modal (fuera del contenedor de la imagen o los puntos)
             if (e.target === modal) {
                 closeModal();
             }
