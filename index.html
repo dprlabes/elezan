@@ -64,7 +64,7 @@
             width: 100%;
         }
 
-        /* 4. ESTRUCTURA DE BOTONES Y ANIMACIONES APNG */
+        /* 4. ESTRUCTURA DE BOTONES Y ANIMACIONES */
         .hover-effect {
             position: relative;
             display: inline-block;
@@ -80,6 +80,11 @@
             image-rendering: auto;
         }
 
+        /* Al pasar el ratón, la imagen base normal se vuelve transparente */
+        .hover-effect:hover img.button-img:not(.top) {
+            opacity: 0;
+        }
+
         .hover-effect img.top {
             position: absolute;
             top: 0;
@@ -91,15 +96,16 @@
             pointer-events: none;
         }
 
+        /* Al pasar el ratón, la imagen subrayada aparece */
         .hover-effect:hover img.top {
             opacity: 1;
         }
 
         /* 5. ANCHOS MÁXIMOS PARA JERARQUÍA EN ESCRITORIO */
-        .btn-art { max-width: 580px; }
-        .btn-commercial { max-width: 780px; }
-        .btn-contact { max-width: 480px; }
-        .btn-info { max-width: 240px; }
+        .btn-art { max-width: 563px; }
+        .btn-commercial { max-width: 784px; }
+        .btn-contact { max-width: 444px; }
+        .btn-info { max-width: 202px; }
 
         /* 6. DISEÑO RESPONSIVE ADAPTATIVO */
         @media (max-width: 1024px) {
