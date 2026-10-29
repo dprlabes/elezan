@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elezan - Info</title>
+    <meta name="description" content="Daniel Elezan @elezanes Painter, illustrator and designer">
+    
+    <!-- Favicon de la web -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Precarga del fondo animado para transición instantánea -->
+    <link rel="preload" as="image" href="fondonubes.gif">
+
+    <!-- Importación de la tipografía Inter Tight -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,480;1,300;1,480&display=swap" rel="stylesheet">
+
+    <style>
+        /* 1. RESET Y CONFIGURACIÓN GLOBAL */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body.info-page {
+            width: 100%;
+            min-height: 100vh;
+            background-image: url('fondonubes.gif');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        /* 2. CONTROL DE CARGA INICIAL */
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #content {
+            opacity: 1;
+            visibility: visible;
+            width: 100%;
+            min-height: 100vh;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .info-wrapper {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Imagen circular de perfil con reducción fluida y progresiva en todos los tamaños */
+        .profile-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            /* Se reduce de forma suave adaptándose al ancho de pantalla, pero nunca supera tu tamaño original de escritorio ni baja de 160px en móviles */
+           max-width: clamp(360px, 35vw, 480px);
+            border-radius: 50%;
+            margin: 0 auto 35px auto;
+            border: none;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: auto;
+        }
+
+        /* 3. FUENTE BIOGRAFÍA FLUIDA Y PROGRESIVA: Inter Tight */
+        .bio-container {
+            width: 100%;
+            max-width: 720px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .bio-text {
+            font-family: "Inter Tight", sans-serif;
+            /* El tamaño del texto baja de forma totalmente gradual y fluida entre 17px y 20px según la pantalla */
+            font-size: clamp(17px, 1.8vw, 20px);
+            font-style: italic;
+            font-weight: 300;
+            color: #000;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            text-wrap: balance;
+        }
+
+        .bio-text span {
+            background-color: #ffffff;
+            padding: 2px 6px;
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
+        }
+
+        .bio-text b {
+            font-style: normal;
+            font-weight: 480;
+        }
+
+        /* 4. FUENTE COPYRIGHT: Georgia */
+        .license-text {
+            font-family: Georgia, serif;
+            font-size: 12px;
+            color: #000;
+            text-align: center;
+            line-height: 1.4;
+            margin-bottom: 50px;
+            max-width: 650px;
+        }
+
+        .license-text a {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        /* 5. FUENTE ENLACES LEGALES */
+        .legal-links {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #000;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .legal-links a {
+            color: #000;
+            text-decoration: none;
+            margin: 0 3px;
+        }
+
+        .legal-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- DISEÑO RESPONSIVE MÍNIMO PARA MÓVILES EXTREMOS --- */
+        @media (max-width: 600px) {
+            .info-wrapper {
+                padding: 30px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body class="info-page">
+
+    <!-- Contenedor principal oculto hasta que carguen las imágenes y fondos -->
+    <div class="hidden" id="content">
+
+        <main class="info-wrapper">
+            
+            <!-- Imagen circular de perfil / artista -->
+            <img src="elezan.png" alt="Daniel Elezan" class="profile-img">
+
+            <!-- Biografía en Español e Inglés -->
+            <div class="bio-container">
+                <p class="bio-text">
+                    <span>
+                        <b>Elezan</b> (Jerez, Andalucía, ESP). Grad. en BBAA. Desarrolla su trabajo en la intersección entre las artes plásticas y el diseño, con el dibujo como principal forma de expresión y estilo propio. Su práctica abarca tanto medios y materiales analógicos como digitales, explorando las posibilidades de cada formato.
+                    </span>
+                </p>
+                
+                <p class="bio-text">
+                    <span>
+                        <b>Elezan</b> (Jerez, Andalusia, ESP). BFA in Fine Arts. Develops his work at the intersection between visual arts and design, with drawing as his primary form of expression and personal style. His practice encompasses both analog and digital media and materials, exploring the possibilities of each format.
+                    </span>
+                </p>
+            </div>
+
+            <!-- Licencia Creative Commons -->
+            <div class="license-text">
+                © Elezan is licensed under Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International.<br>
+                To view a copy of this license, visit <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener noreferrer">https://creativecommons.org/licenses/by-nc-nd/4.0/</a>
+            </div>
+
+            <!-- Enlaces Legales -->
+            <div class="legal-links">
+                <a href="legal.html">Legal Notice</a> | 
+                <a href="privacy.html">Privacy Policy</a>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Script de control con red de seguridad anti-pantalla en blanco -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const contentDiv = document.getElementById('content');
+            const pageImages = Array.from(document.images).map(img => img.src);
+            const backgrounds = ['fondonubes.gif'];
+            const allSources = [...pageImages, ...backgrounds];
+            
+            let loadedCount = 0;
+            const totalAssets = allSources.length;
+            let safetyTriggered = false;
+
+            function showContent() {
+                if (!safetyTriggered) {
+                    safetyTriggered = true;
+                    contentDiv.classList.remove('hidden');
+                }
+            }
+
+            function assetLoaded() {
+                loadedCount++;
+                if (loadedCount >= totalAssets) {
+                    showContent();
+                }
+            }
+
+            // Red de seguridad: si tras 1.5s alguna imagen no responde, muestra el contenido de todos modos
+            setTimeout(showContent, 1500);
+
+            if (totalAssets === 0) {
+                showContent();
+            } else {
+                allSources.forEach(src => {
+                    const tempImg = new Image();
+                    tempImg.src = src;
+                    tempImg.onload = assetLoaded;
+                    tempImg.onerror = assetLoaded;
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
