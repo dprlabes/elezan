@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elezan - Art Works</title>
+    <meta name="description" content="Daniel Elezan @elezanes Painter, illustrator and designer">
+    
+    <!-- Favicon de la web -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Precarga del fondo animado -->
+    <link rel="preload" as="image" href="artworks/fondoagua.gif">
+
+    <!-- Importación de la tipografía Inter Tight -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,480;0,700;1,300;1,480;1,700&display=swap" rel="stylesheet">
+
+    <style>
+        /* 1. RESET Y CONFIGURACIÓN GLOBAL */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body.artworks-page {
+            width: 100%;
+            min-height: 100vh;
+            background-image: url('artworks/fondoagua.gif');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: "Inter Tight", sans-serif;
+        }
+
+        /* 2. CONTROL DE CARGA INICIAL */
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #content {
+            opacity: 1;
+            visibility: visible;
+            width: 100%;
+            min-height: 100vh;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .artworks-wrapper {
+            width: 100%;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 40px 15px;
+        }
+
+        /* 3. GALERÍA COLLAGE EN ORDEN CRONOLÓGICO */
+        .artworks-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px; /* Margen constante de 2px */
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        .grid-item {
+            flex: 1 1 calc(33.333% - 1.34px); /* Cálculo exacto proporcional al gap de 2px */
+            max-width: calc(33.333% - 1.34px);
+            cursor: pointer;
+            overflow: visible !important;
+            display: block;
+        }
+
+        .grid-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.2s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .grid-item:hover img {
+            transform: scale(1.02);
+            z-index: 5;
+        }
+
+       /* 4. MODAL / CARRUSEL FLOTANTE */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            position: relative;
+            width: auto;
+            max-width: 95vw;
+            height: auto;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-img-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .img-wrapper {
+            position: relative;
+            display: inline-block;
+            max-width: 1080px; /* Límite estricto de 1080px para el lado más largo (horizontal) */
+            max-height: 1080px; /* Límite estricto de 1080px para el lado más largo (vertical) */
+        }
+
+        .modal-img-container img {
+            max-width: 1080px;  /* Ninguna imagen superará los 1080px de ancho */
+            max-height: 1080px; /* Ninguna imagen superará los 1080px de alto */
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            user-select: none;
+        }
+
+        /* Franja blanca inferior con descripción a la izquierda y enlace a la derecha */
+        .modal-info-bar {
+            width: 100%;
+            background: #ffffff;
+            color: #000000;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .modal-desc {
+            font-weight: 480;
+        }
+
+        .download-link {
+            color: #000;
+            text-decoration: underline;
+            font-weight: 500;
+            font-size: 10px;
+            margin-left: 15px;
+            white-space: nowrap;
+        }
+
+        /* BARRA INFERIOR DE CÍRCULOS (INDICADORES) */
+        .modal-nav-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+            background: none;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 1.5px solid #000000;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .dot.active {
+            background: #000000;
+        }
+
+        .dot:hover {
+            opacity: 0.5;
+        }
+
+        /* Ajustes Responsivos Móvil */
+        @media (max-width: 768px) {
+            .grid-item {
+                flex: 1 1 calc(33.333% - 4px);
+                max-width: calc(33.333% - 4px);
+            }
+            .artworks-grid {
+                gap: 6px;
+            }
+            .modal-info-bar {
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+
+<body class="artworks-page">
+
+    <!-- Contenedor principal -->
+    <div class="hidden" id="content">
+        <main class="artworks-wrapper">
+            <div class="artworks-grid" id="galleryGrid">
+                <!-- Portadas de la galería generadas dinámicamente -->
+            </div>
+        </main>
+    </div>
+
+    <!-- ESTRUCTURA DEL MODAL CARRUSEL -->
+    <div class="modal" id="carouselModal">
+        <div class="modal-container">
+            <div class="modal-img-container" id="modalImgContainer">
+                <div class="img-wrapper">
+                    <img src="" alt="Artwork Large" id="modalImg">
+                </div>
+            </div>
+
+            <div class="modal-info-bar">
+                <span class="modal-desc" id="modalDesc">Detalle</span>
+                <a href="#" target="_blank" rel="noopener noreferrer" id="downloadBtn" class="download-link">Open</a>
+            </div>
+
+            <!-- Barra inferior con círculos dinámicos -->
+            <div class="modal-nav-bar" id="modalNavBar">
+                <!-- Se generan automáticamente desde JavaScript según el nº de fotos -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE GALERÍA Y CONTROLES DEL CARRUSEL -->
+    <script>
+        const projects = [
+            {
+                title: "Bodegón Jerezano. Pintura Mural. 24",
+                images: ["rrss-eiuvbpweriubp.png", "rrss-wefwe1.png", "rrss-eovernver.png", "rrss-ldvbdfjedfv.png"]
+            },
+            {
+                title: "Retratos de gitana. Dibujos en estudio. 24",
+                images: ["rrss-vevwerqr1.png"]
+            },
+            {
+                title: "Fuguras. Dibujos en estudio. 23",
+                images: ["rrss-wrb4rb1.png", "rrss-everfg1.png"]
+            },
+            {
+                title: "Retrato de mujer y ornamento. Impresión digital. 23",
+                images: ["rrss-asviafdv.png", "rrss-e08v7erewro.png"]
+            },
+            {
+                title: "Cráneos. Grabado en punta seca. 17",
+                images: ["rrss-dfijvbdwjvdf.png", "rrss-sdviuguvif.png"]
+            },
+            {
+                title: "Ruinas. Grabado en aguafuerte. 15",
+                images: ["rrss-dpviuejvbv.png", "rrss-ivjdvfvdf4.png"]
+            }
+        ];
+
+        let currentProjectIndex = 0;
+        let currentImageIndex = 0;
+
+        const galleryGrid = document.getElementById('galleryGrid');
+        const modal = document.getElementById('carouselModal');
+        const modalImg = document.getElementById('modalImg');
+        const modalDesc = document.getElementById('modalDesc');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const modalNavBar = document.getElementById('modalNavBar');
+
+        // Renderizar respetando el orden cronológico en mosaico
+        projects.forEach((proj, pIndex) => {
+            const coverImg = proj.images[0];
+            const item = document.createElement('div');
+            item.className = 'grid-item';
+            item.innerHTML = `<img src="artworks/${coverImg}" alt="Artwork">`;
+            item.onclick = () => openCarousel(pIndex, 0);
+            galleryGrid.appendChild(item);
+        });
+
+        function openCarousel(projIdx, imgIdx) {
+            currentProjectIndex = projIdx;
+            currentImageIndex = imgIdx;
+            buildDots();
+            updateModalContent();
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        // Construir los círculos según el número de imágenes de la obra actual
+        function buildDots() {
+            modalNavBar.innerHTML = '';
+            const currentProj = projects[currentProjectIndex];
+            
+            if (currentProj.images.length <= 1) {
+                modalNavBar.style.display = 'none';
+                return;
+            } else {
+                modalNavBar.style.display = 'flex';
+            }
+
+            currentProj.images.forEach((_, idx) => {
+                const dot = document.createElement('span');
+                dot.className = `dot ${idx === currentImageIndex ? 'active' : ''}`;
+                dot.onclick = (e) => {
+                    e.stopPropagation();
+                    currentImageIndex = idx;
+                    updateModalContent();
+                };
+                modalNavBar.appendChild(dot);
+            });
+        }
+
+        function updateModalContent() {
+            const currentProj = projects[currentProjectIndex];
+            const imgSrc = `artworks/${currentProj.images[currentImageIndex]}`;
+            modalImg.src = imgSrc;
+            
+            modalDesc.textContent = currentProj.title;
+            downloadBtn.href = imgSrc;
+
+            // Actualizar el estado activo de los círculos
+            const dots = modalNavBar.querySelectorAll('.dot');
+            dots.forEach((dot, idx) => {
+                if (idx === currentImageIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        function nextImage() {
+            const currentProj = projects[currentProjectIndex];
+            currentImageIndex = (currentImageIndex + 1) % currentProj.images.length;
+            updateModalContent();
+        }
+
+        function prevImage() {
+            const currentProj = projects[currentProjectIndex];
+            currentImageIndex = (currentImageIndex - 1 + currentProj.images.length) % currentProj.images.length;
+            updateModalContent();
+        }
+
+        // Eventos
+        document.getElementById('modalImgContainer').onclick = nextImage;
+
+        // Clic fuera del modal para cerrar
+        modal.onclick = (e) => {
+            if (e.target === modal) closeModal();
+        };
+
+        // Control por teclado
+        document.addEventListener('keydown', (e) => {
+            if (!modal.classList.contains('active')) return;
+            if (e.key === 'ArrowRight') nextImage();
+            if (e.key === 'ArrowLeft') prevImage();
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Control por gestos Swipe en Móvil
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        modal.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        modal.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 40) nextImage();
+            if (touchEndX > touchStartX + 40) prevImage();
+        }
+
+        // CONTROL DE CARGA INICIAL
+        document.addEventListener("DOMContentLoaded", function() {
+            const contentDiv = document.getElementById('content');
+            setTimeout(() => contentDiv.classList.remove('hidden'), 1000);
+        });
+    </script>
+</body>
+</html>
