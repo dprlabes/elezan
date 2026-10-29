@@ -427,12 +427,10 @@
             const imgHeight = activeImg.getBoundingClientRect().height;
 
             if (imgWidth > 0 && imgHeight > 0) {
-                // Ajustamos el contenedor de la imagen y la caja unificada exactamente a las dimensiones de la foto actual
                 modalImgContainer.style.width = imgWidth + 'px';
                 modalImgContainer.style.height = imgHeight + 'px';
                 modalContentBox.style.width = imgWidth + 'px';
 
-                // Posicionamos el carrusel de manera exacta
                 let targetX = 0;
                 for (let i = 0; i < currentImageIndex; i++) {
                     const prevImg = slides[i].querySelector('img');
@@ -487,16 +485,18 @@
             }
         });
 
-        // CONTROL DE ARRASTRE Y CLIC PRECISO
+        // CONTROL LIMPIO DE ARRASTRE Y CLIC SIMPLE
         let startX = 0;
+        let startY = 0;
         let currentTranslateX = 0;
         let isDragging = false;
         let hasMoved = false;
 
-        function handleStart(clientX) {
+        function handleStart(clientX, clientY) {
             isDragging = true;
             hasMoved = false;
             startX = clientX;
+            startY = clientY;
 
             const slides = carouselTrack.querySelectorAll('.carousel-slide');
             currentTranslateX = 0;
@@ -508,11 +508,13 @@
             carouselTrack.style.transition = 'none';
         }
 
-        function handleMove(clientX) {
+        function handleMove(clientX, clientY) {
             if (!isDragging) return;
             const diffX = clientX - startX;
+            const diffY = clientY - startY;
             
-            if (Math.abs(diffX) > 8) {
+            // Si el movimiento supera los 6 píxeles, se considera un arrastre real
+            if (Math.abs(diffX) > 6 || Math.abs(diffY) > 6) {
                 hasMoved = true;
                 carouselTrack.style.transform = `translateX(${-currentTranslateX + diffX}px)`;
             }
@@ -524,15 +526,15 @@
 
             const slides = carouselTrack.querySelectorAll('.carousel-slide');
             if (slides.length === 0) return;
-            
-            const activeImg = slides[currentImageIndex].querySelector('img');
-            const slideWidth = activeImg ? activeImg.getBoundingClientRect().width : 300;
 
+            // SI NO HUBO MOVIMIENTO REAL, ES UN CLIC SIMPLE DIRECTO -> PASA A LA SIGUIENTE FOTO AL INSTANTE
             if (!hasMoved) {
-                nextImage(false); // Clic estático simple dentro de la imagen cambia al instante sin animación
+                nextImage(false);
                 return;
             }
 
+            const activeImg = slides[currentImageIndex].querySelector('img');
+            const slideWidth = activeImg ? activeImg.getBoundingClientRect().width : 300;
             const diffX = clientX - startX;
             const currentProj = projects[currentProjectIndex];
 
@@ -546,18 +548,18 @@
         }
 
         // Eventos Táctiles (Móvil)
-        modalImgContainer.addEventListener('touchstart', (e) => handleStart(e.touches[0].clientX));
-        modalImgContainer.addEventListener('touchmove', (e) => handleMove(e.touches[0].clientX));
+        modalImgContainer.addEventListener('touchstart', (e) => handleStart(e.touches[0].clientX, e.touches[0].clientY));
+        modalImgContainer.addEventListener('touchmove', (e) => handleMove(e.touches[0].clientX, e.touches[0].clientY));
         modalImgContainer.addEventListener('touchend', (e) => handleEnd(e.changedTouches[0].clientX));
 
         // Eventos de Ratón (Escritorio)
         modalImgContainer.addEventListener('mousedown', (e) => {
             e.preventDefault();
-            handleStart(e.clientX);
+            handleStart(e.clientX, e.clientY);
         });
 
         window.addEventListener('mousemove', (e) => {
-            if (isDragging) handleMove(e.clientX);
+            if (isDragging) handleMove(e.clientX, e.clientY);
         });
 
         window.addEventListener('mouseup', (e) => {
