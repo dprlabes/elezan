@@ -64,7 +64,7 @@
             width: 100%;
         }
 
-        /* 4. ESTRUCTURA DE BOTONES Y ANIMACIONES */
+        /* 4. ESTRUCTURA DE BOTONES Y ANIMACIONES SIN SOLAPAMIENTO */
         .hover-effect {
             position: relative;
             display: inline-block;
@@ -78,9 +78,10 @@
             max-width: 100%;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: auto;
+            transition: none;
         }
 
-        /* Al pasar el ratón, la imagen base normal se vuelve transparente */
+        /* Al pasar el ratón, la imagen base se apaga por completo */
         .hover-effect:hover img.button-img:not(.top) {
             opacity: 0;
         }
@@ -107,7 +108,7 @@
         .btn-contact { max-width: 444px; }
         .btn-info { max-width: 202px; }
 
-        /* 6. DISEÑO RESPONSIVE ADAPTATIVO */
+        /* 6. DISEÑO RESPONSIVE ADAPTATIVO CON FORMATOS PROPORCIONALES */
         @media (max-width: 1024px) {
             .art-menu { gap: 16px; }
             .btn-art { max-width: 60vw; }
