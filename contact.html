@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elezan - Contact</title>
+    <meta name="description" content="Daniel Elezan @elezanes Painter, illustrator and designer">
+    
+    <!-- Favicon de la web -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Precarga del fondo animado para transición instantánea -->
+    <link rel="preload" as="image" href="contact/fondofuego.gif">
+
+    <!-- Importación de la tipografía Inter Tight -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,480;0,700;1,300;1,480;1,700&display=swap" rel="stylesheet">
+
+    <style>
+        /* 1. RESET Y CONFIGURACIÓN GLOBAL */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body.contact-page {
+            width: 100%;
+            min-height: 100vh;
+            background-image: url('contact/fondofuego.gif');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: "Inter Tight", sans-serif;
+        }
+
+        /* 2. CONTROL DE CARGA INICIAL */
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #content {
+            opacity: 1;
+            visibility: visible;
+            width: 100%;
+            min-height: 100vh;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .contact-wrapper {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 50px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 3. CABECERA DE CONTACTO (Su medida máxima es su ancho real: 640px) */
+        .header-img {
+            display: block;
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+            margin-bottom: 30px;
+            image-rendering: -webkit-optimize-contrast;
+        }
+
+        /* 4. FORMULARIO (Sin fondo, integrado directamente sobre el fuego) */
+        .contact-form {
+            width: 100%;
+            background: transparent;
+            padding: 30px;
+            margin-bottom: 35px;
+        }
+
+        /* Labels del formulario en negrita */
+        .form-label {
+            display: block;
+            font-weight: 700; /* Puesto en Negrita Fuerte */
+            font-size: 14px;
+            color: #000;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #000;
+            background: #fff; /* Campos de texto en blanco sólido para lectura perfecta */
+            font-family: "Sans-Serif", sans-serif;
+            font-size: 16px;
+            color: #000;
+            border-radius: 0;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: 2px solid #000;
+        }
+
+        /* 5. CASILLA DE PRIVACIDAD (Checkbox más grande) */
+        .privacy-consent {
+            font-size: 13px;
+            color: #000;
+            line-height: 1.4;
+        }
+
+        .custom-checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        /* Tamaño del cuadro de check ampliado */
+        .custom-checkbox-container input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 0px;
+            cursor: pointer;
+            accent-color: #000;
+        }
+
+        .checkbox-label-text a {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        /* 6. BOTÓN DE ENVÍO */
+        .btn-container {
+            text-align: center;
+            margin-top: 25px;
+            margin-bottom: 25px;
+        }
+
+        .send-btn {
+            background: #000;
+            color: #fff;
+            font-family: "Inter Tight", sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            padding: 12px 35px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .send-btn:hover {
+            background: #333;
+        }
+
+        /* 7. TEXTO LEGAL */
+        .disclaimer-text {
+            font-size: 10px;
+            color: #333;
+            line-height: 1.4;
+            border-top: 1px solid rgba(0,0,0,0.15);
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .disclaimer-text p {
+            margin-bottom: 10px;
+        }
+
+        .disclaimer-text a {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        /* 8. REDES SOCIALES (Mínimos aumentados para mejor visibilidad en móviles) */
+        .social-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .social-icon {
+            height: auto;
+            display: block;
+            transition: opacity 0.2s ease;
+            image-rendering: -webkit-optimize-contrast;
+        }
+
+        .icon-fb { max-width: clamp(72px, 15vw, 109px); }
+        .icon-ig { max-width: clamp(66px, 14vw, 100px); }
+        .icon-tk { max-width: clamp(68px, 14vw, 102px); }
+        .icon-x  { max-width: clamp(72px, 15vw, 108px); }
+        .icon-yt { max-width: clamp(80px, 16vw, 120px); }
+
+        .social-icon:hover {
+            opacity: 0.6;
+        }
+
+        /* --- DISEÑO RESPONSIVE MÓVIL --- */
+        @media (max-width: 600px) {
+            .contact-wrapper {
+                padding: 25px 15px;
+            }
+            .contact-form {
+                padding: 20px 15px;
+            }
+            .header-img {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body class="contact-page">
+
+    <!-- Contenedor principal oculto hasta que carguen los recursos -->
+    <div class="hidden" id="content">
+
+        <main class="contact-wrapper">
+            
+            <!-- Imagen Cabecera (SEND ME AN E-MAIL) -->
+            <img src="contact/sendmeaemail.webp" alt="SEND ME AN EMAIL" class="header-img">
+
+            <!-- Formulario Formspree -->
+            <form action="https://formspree.io/f/mpwqdykw" method="POST" class="contact-form">
+                
+                <label class="form-label" for="name">NAME:</label>
+                <input id="name" name="name" required type="text" class="form-input" />
+
+                <label class="form-label" for="email">E-MAIL:</label>
+                <input id="email" name="email" required type="email" class="form-input" />
+
+                <label class="form-label" for="message">MESSAGE:</label>
+                <textarea id="message" name="message" required class="form-textarea"></textarea>
+
+                <!-- Casilla de Aceptación Obligatoria (RGPD) -->
+                <div class="privacy-consent" style="margin: 15px 0;">
+                    <label class="custom-checkbox-container">
+                        <input type="checkbox" name="privacy_policy" value="accepted" required>
+                        <span class="checkbox-label-text">
+                            He leído y acepto la <a href="privacy.html" target="_blank">Política de Privacidad</a> / I have read and accept the <a href="privacy.html" target="_blank">Privacy Policy</a>.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="btn-container">
+                    <button type="submit" class="send-btn">SEND*</button>
+                </div>
+
+                <!-- Información legal de protección de datos -->
+                <div class="disclaimer-text">
+                    <p>
+                        Información básica de protección de datos: Responsable: Elezan. Finalidad: Responder a tu consulta y gestionar el contacto. Legitimación: Consentimiento del interesado. Encargado del tratamiento: Formspree Inc. Derechos: Puedes acceder, rectificar o suprimir tus datos solicitándolo a través de esta web. Más información en la <a href="privacy.html">Política de Privacidad</a>.
+                    </p>
+                    <p>
+                        *Al enviar, consientes el uso de tu nombre y correo para responder a tu mensaje. Asimismo, te haces responsable de su contenido conforme a la ley si procede. / *By submitting, you consent to the use of your name and email to respond to your message. Likewise, you accept responsibility for its content under the law where applicable.
+                    </p>
+                </div>
+            </form>
+
+            <!-- Redes Sociales Abajo -->
+            <nav class="social-row">
+                <a href="https://instagram.com/elezanes" target="_blank" rel="noopener noreferrer">
+                    <img src="contact/instagram.webp" alt="Instagram" class="social-icon icon-ig">
+                </a>
+                <a href="https://tiktok.com/@elezanes" target="_blank" rel="noopener noreferrer">
+                    <img src="contact/tiktok.webp" alt="TikTok" class="social-icon icon-tk">
+                </a>
+                <a href="https://youtube.com/@elezanes" target="_blank" rel="noopener noreferrer">
+                    <img src="contact/youtube.webp" alt="YouTube" class="social-icon icon-yt">
+                </a>
+                <a href="https://x.com/elezanes" target="_blank" rel="noopener noreferrer">
+                    <img src="contact/X-twitter.webp" alt="X Twitter" class="social-icon icon-x">
+                </a>
+            </nav>
+
+        </main>
+
+    </div>
+
+    <!-- Script de control de carga optimizado con red de seguridad -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const contentDiv = document.getElementById('content');
+            
+            // Selecciona las imágenes principales y el fondo para precargarlos
+            const pageImages = Array.from(document.querySelectorAll('.header-img, .social-icon')).map(img => img.src);
+            const backgrounds = ['contact/fondofuego.gif'];
+            const criticalAssets = [...pageImages, ...backgrounds];
+            
+            let loadedCount = 0;
+            const totalAssets = criticalAssets.length;
+            let safetyTriggered = false;
+
+            function showContent() {
+                if (!safetyTriggered) {
+                    safetyTriggered = true;
+                    contentDiv.classList.remove('hidden');
+                }
+            }
+
+            function assetLoaded() {
+                loadedCount++;
+                if (loadedCount >= totalAssets) {
+                    showContent();
+                }
+            }
+
+            // Red de seguridad de 1000ms para móviles o redes lentas
+            setTimeout(showContent, 1000);
+
+            if (totalAssets === 0) {
+                showContent();
+            } else {
+                criticalAssets.forEach(src => {
+                    const tempImg = new Image();
+                    tempImg.src = src;
+                    tempImg.onload = assetLoaded;
+                    tempImg.onerror = assetLoaded;
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
