@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="icon" type="image/png" href="favicon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Elezan</title>
     <meta name="description" content="Daniel Elezan @elezanes Painter, illustrator and designer">
     
-    <!-- Enlace a tu CSS general -->
-    <link rel="stylesheet" href="styles.css">
+    <!-- Favicon de la web -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Precarga de los fondos para transiciones instantáneas -->
+    <link rel="preload" as="image" href="index1.jpg">
+    <link rel="preload" as="image" href="index2.jpg">
 
     <style>
-        /* --- ESTILOS GENERALES Y DE FONDO --- */
-        body {
+        /* 1. RESET Y CONFIGURACIÓN GLOBAL */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        body {
             width: 100%;
             min-height: 100vh;
             background-position: center;
@@ -24,7 +32,7 @@
             transition: background-image 1s ease-in-out;
         }
 
-        /* Control de carga inicial */
+        /* 2. CONTROL DE CARGA INICIAL */
         .hidden {
             opacity: 0;
             visibility: hidden;
@@ -35,17 +43,17 @@
             visibility: visible;
             width: 100%;
             min-height: 100vh;
+            transition: opacity 0.5s ease-in-out;
         }
 
-        /* --- MENÚ CENTRADO EN ESCRITORIO --- */
+        /* 3. MENÚ CENTRADO FLEXBOX */
         .menu-container {
             width: 100%;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 40px 20px;
-            box-sizing: border-box;
+            padding: 20px;
         }
 
         .art-menu {
@@ -53,12 +61,15 @@
             flex-direction: column;
             align-items: center;
             gap: 20px;
+            width: 100%;
         }
 
+        /* 4. ESTRUCTURA DE BOTONES Y ANIMACIONES APNG */
         .hover-effect {
             position: relative;
             display: inline-block;
             text-align: center;
+            text-decoration: none;
         }
 
         .button-img {
@@ -69,96 +80,77 @@
             image-rendering: auto;
         }
 
-        /* Capa superior (subrayado) alineada encima */
         .hover-effect img.top {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            visibility: hidden;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: auto;
+            opacity: 0;
+            transition: none;
+            pointer-events: none;
         }
 
-        /* Efecto Hover limpio */
         .hover-effect:hover img.top {
-            visibility: visible;
+            opacity: 1;
         }
 
-        .hover-effect:hover img:first-child {
-            visibility: hidden;
+        /* 5. ANCHOS MÁXIMOS PARA JERARQUÍA EN ESCRITORIO */
+        .btn-art { max-width: 580px; }
+        .btn-commercial { max-width: 780px; }
+        .btn-contact { max-width: 480px; }
+        .btn-info { max-width: 240px; }
+
+        /* 6. DISEÑO RESPONSIVE ADAPTATIVO */
+        @media (max-width: 1024px) {
+            .art-menu { gap: 16px; }
+            .btn-art { max-width: 60vw; }
+            .btn-commercial { max-width: 78vw; }
+            .btn-contact { max-width: 52vw; }
+            .btn-info { max-width: 26vw; }
         }
 
-        /* --- 1. CONFIGURACIÓN TABLETS (IPAD) --- */
-        @media (min-width: 601px) and (max-width: 1024px) {
-            .menu-container { padding: 20px 10px; }
-            .art-menu { width: 100%; gap: 18px; }
-            .hover-effect { display: block; width: 100%; text-align: center; }
-
-            .btn-art { width: 85% !important; max-width: 580px !important; margin: 0 auto !important; }
-            .btn-commercial { width: 95% !important; max-width: 680px !important; margin: 0 auto !important; }
-            .btn-contact { width: 70% !important; max-width: 480px !important; margin: 0 auto !important; }
-            .btn-info { width: 38% !important; max-width: 260px !important; margin: 0 auto !important; }
-
-            .hover-effect.art-box img.top { width: 85% !important; max-width: 580px !important; left: 50% !important; transform: translateX(-50%) !important; }
-            .hover-effect.commercial-box img.top { width: 95% !important; max-width: 680px !important; left: 50% !important; transform: translateX(-50%) !important; }
-            .hover-effect.contact-box img.top { width: 70% !important; max-width: 480px !important; left: 50% !important; transform: translateX(-50%) !important; }
-            .hover-effect.info-box img.top { width: 38% !important; max-width: 260px !important; left: 50% !important; transform: translateX(-50%) !important; }
-            
-            .hover-effect img.top { position: absolute; top: 0; height: auto !important; }
-        }
-
-        /* --- 2. CONFIGURACIÓN MÓVILES (IPHONE) --- */
         @media (max-width: 600px) {
-            .menu-container { padding: 20px 12px; }
-            .art-menu { width: 100%; gap: 15px; }
-            .hover-effect { display: block; width: 100%; text-align: center; }
-
-            .btn-art { width: 85% !important; max-width: 360px !important; margin: 0 auto !important; }
-            .btn-commercial { width: 95% !important; max-width: 420px !important; margin: 0 auto !important; }
-            .btn-contact { width: 70% !important; max-width: 300px !important; margin: 0 auto !important; }
-            .btn-info { width: 38% !important; max-width: 150px !important; margin: 0 auto !important; }
-
-            .hover-effect.art-box img.top { width: 85% !important; max-width: 360px !important; left: 50% !important; transform: translateX(-50%) !important; }
-            .hover-effect.commercial-box img.top { width: 95% !important; max-width: 420px !important; left: 50% !important; transform: translateX(-50%) !important; }
-            .hover-effect.contact-box img.top { width: 70% !important; max-width: 300px !important; left: 50% !important; transform: translateX(-50%) !important; }
-            .hover-effect.info-box img.top { width: 38% !important; max-width: 150px !important; left: 50% !important; transform: translateX(-50%) !important; }
-            
-            .hover-effect img.top { position: absolute; top: 0; height: auto !important; }
+            .menu-container { padding: 15px; }
+            .art-menu { gap: 14px; }
+            .btn-art { max-width: 80vw; }
+            .btn-commercial { max-width: 92vw; }
+            .btn-contact { max-width: 65vw; }
+            .btn-info { max-width: 35vw; }
         }
     </style>
 </head>
+
 <body>
 
-    <!-- Contenedor oculto hasta que carguen las imágenes -->
+    <!-- Contenedor principal oculto hasta que carguen las imágenes y fondos -->
     <div class="hidden" id="content">
         
         <main class="menu-container">
             <nav class="art-menu">
                 
                 <!-- ART WORKS -->
-                <a class="hover-effect art-box" href="artworks.html">
+                <a class="hover-effect" href="artworks.html">
                     <img alt="Art Works" class="button-img btn-art" src="artworks.webp" />
-                    <img alt="Art Works Subrayado" class="button-img top btn-art" src="artworks-s.webp" />
+                    <img alt="Art Works Hover" class="button-img top btn-art" src="artworks-s.webp" />
                 </a>
 
                 <!-- COMMERCIAL WORKS -->
-                <a class="hover-effect commercial-box" href="">
+                <a class="hover-effect" href="commercial.html">
                     <img alt="Commercial Works" class="button-img btn-commercial" src="comercialworks.webp" />
-                    <img alt="Commercial Works Subrayado" class="button-img top btn-commercial" src="comercialworks-s.webp" />
+                    <img alt="Commercial Works Hover" class="button-img top btn-commercial" src="comercialworks-s.webp" />
                 </a>
 
                 <!-- CONTACT -->
-                <a class="hover-effect contact-box" href="contact.html">
+                <a class="hover-effect" href="contact.html">
                     <img alt="Contact" class="button-img btn-contact" src="contact.webp" />
-                    <img alt="Contact Subrayado" class="button-img top btn-contact" src="contact-s.webp" />
+                    <img alt="Contact Hover" class="button-img top btn-contact" src="contact-s.webp" />
                 </a>
 
                 <!-- INFO -->
-                <a class="hover-effect info-box" href="info.html">
+                <a class="hover-effect" href="info.html">
                     <img alt="Info" class="button-img btn-info" src="info.webp" />
-                    <img alt="Info Subrayado" class="button-img top btn-info" src="info-s.webp" />
+                    <img alt="Info Hover" class="button-img top btn-info" src="info-s.webp" />
                 </a>
 
             </nav>
@@ -166,12 +158,12 @@
 
     </div>
 
-    <!-- Script optimizado: Precarga menús y fondos, y gestiona el cambio cada 10s -->
+    <!-- Script de control: Precarga de recursos WebP y rotación de fondos -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Imágenes del menú y fondos a precargar
+            // Recoge las imágenes WebP del menú y los fondos de la carpeta raíz
             const menuImages = Array.from(document.images).map(img => img.src);
-            const backgrounds = ['webfondo1.jpg', 'webfondo2.jpg'];
+            const backgrounds = ['index1.jpg', 'index2.jpg'];
             const allSources = [...menuImages, ...backgrounds];
             
             let loadedCount = 0;
@@ -191,11 +183,11 @@
                     const tempImg = new Image();
                     tempImg.src = src;
                     tempImg.onload = assetLoaded;
-                    tempImg.onerror = assetLoaded; // Evita que se quede colgado si falla alguna
+                    tempImg.onerror = assetLoaded;
                 });
             }
 
-            // Rotación de fondos cada 10 segundos
+            // Cambiar fondo aleatoriamente cada 10 segundos
             let currentIndex = Math.floor(Math.random() * backgrounds.length);
 
             function changeBackground() {
