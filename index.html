@@ -172,7 +172,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             // Recoge las imágenes WebP del menú y los fondos de la carpeta raíz
             const menuImages = Array.from(document.images).map(img => img.src);
-            const backgrounds = ['index1.jpg', 'index2.jpg'];
+            const backgrounds = ['index/index1.jpg', 'index/index2.jpg'];
             const allSources = [...menuImages, ...backgrounds];
             
             let loadedCount = 0;
