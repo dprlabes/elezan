@@ -332,6 +332,43 @@
                 });
             }
         });
+
+        // CONTROL DE PRECARGA REAL DE IMÁGENES
+        document.addEventListener("DOMContentLoaded", function() {
+            const contentDiv = document.getElementById('content');
+            
+            // Recopilamos todas las rutas de imágenes que queremos precargar
+            // (Incluimos el fondo y las portadas de la galería)
+            const imagesToPreload = [
+                'artworks/fondoagua.gif',
+                ...projects.map(proj => `artworks/${proj.images[0]}`)
+            ];
+
+            let loadedCount = 0;
+            const totalImages = imagesToPreload.length;
+
+            if (totalImages === 0) {
+                contentDiv.classList.remove('hidden');
+                return;
+            }
+
+            // Función que comprueba si ya se han descargado todas
+            function imageLoaded() {
+                loadedCount++;
+                if (loadedCount === totalImages) {
+                    // Una vez que están todas en caché, mostramos la web de golpe
+                    contentDiv.classList.remove('hidden');
+                }
+            }
+
+            // Disparamos la carga en segundo plano de cada imagen
+            imagesToPreload.forEach(src => {
+                const img = new Image();
+                img.src = src;
+                img.onload = imageLoaded;
+                img.onerror = imageLoaded; // Por si alguna falla, para que no se quede bloqueado
+            });
+        });
     </script>
 
 </body>
