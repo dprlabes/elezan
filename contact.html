@@ -110,33 +110,34 @@
             outline: 2px solid #000;
         }
 
-        /* 5. CASILLA DE PRIVACIDAD (Checkbox más grande) */
-        .privacy-consent {
-            font-size: 13px;
-            color: #000;
-            line-height: 0;
-        }
+      /* 5. CASILLA DE PRIVACIDAD (Checkbox más grande) */
+.privacy-consent {
+    font-size: 13px;
+    color: #000;
+    line-height: 1.4; 
+}
 
-        .custom-checkbox-container {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            cursor: pointer;
-        }
+.custom-checkbox-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+}
 
-        /* Tamaño del cuadro de check ampliado */
-        .custom-checkbox-container input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin-top: -10px;
-            cursor: pointer;
-            accent-color: #000;
-        }
+/* Tamaño del cuadro de check ampliado */
+.custom-checkbox-container input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: -2px; /* Prueba con -2px, -3px o -4px para bajarlo milimétricamente hasta alinearlo perfecto */
+    cursor: pointer;
+    accent-color: #000;
+    flex-shrink: 0;
+}
 
-        .checkbox-label-text a {
-            color: #000;
-            text-decoration: underline;
-        }
+.checkbox-label-text a {
+    color: #000;
+    text-decoration: underline;
+}
 
         /* 6. BOTÓN DE ENVÍO */
         .btn-container {
