@@ -102,28 +102,30 @@
             opacity: 1;
         }
 
-        /* 5. ANCHOS MÁXIMOS PARA JERARQUÍA EN ESCRITORIO */
+ /* 5. ANCHOS MÁXIMOS PARA JERARQUÍA EN ESCRITORIO */
         .btn-art { max-width: 563px; }
         .btn-commercial { max-width: 784px; }
         .btn-contact { max-width: 444px; }
-        .btn-info { max-width: 202px; }
+        .btn-info { 
+            max-width: 202px; 
+        }
 
-        /* 6. DISEÑO RESPONSIVE ADAPTATIVO CON FORMATOS PROPORCIONALES */
-        @media (max-width: 1080px) {
+        /* 6. DISEÑO RESPONSIVE */
+        @media (max-width: 1024px) {
             .art-menu { gap: 16px; }
             .btn-art { max-width: 60vw; }
             .btn-commercial { max-width: 78vw; }
             .btn-contact { max-width: 52vw; }
-            .btn-info { max-width: 26vw; }
+            .btn-info { max-width: min(26vw, 202px); }
         }
 
-        @media (max-width: 720px) {
+        @media (max-width: 640px) {
             .menu-container { padding: 15px; }
             .art-menu { gap: 14px; }
             .btn-art { max-width: 80vw; }
             .btn-commercial { max-width: 92vw; }
             .btn-contact { max-width: 65vw; }
-            .btn-info { max-width: 35vw; }
+            .btn-info { max-width: min(35vw, 202px); }
         }
     </style>
 </head>
