@@ -180,14 +180,14 @@
             text-decoration: underline;
         }
 
-    /* 8. REDES SOCIALES (Ajustadas para encajar en una sola fila en smartphones) */
+   /* 8. REDES SOCIALES (Ajustadas ligeramente más grandes para smartphones) */
         .social-row {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 15px;
             margin-bottom: 40px;
-            flex-wrap: nowrap; /* Mantiene la fila única */
+            flex-wrap: nowrap;
         }
 
         .social-icon {
@@ -197,12 +197,12 @@
             image-rendering: -webkit-optimize-contrast;
         }
 
-        /* Mínimos ajustados para que quepan todos juntos holgadamente en pantallas pequeñas */
-        .icon-fb { max-width: clamp(42px, 9vw, 109px); }
-        .icon-ig { max-width: clamp(38px, 8.5vw, 100px); }
-        .icon-tk { max-width: clamp(39px, 8.5vw, 102px); }
-        .icon-x  { max-width: clamp(41px, 9vw, 108px); }
-        .icon-yt { max-width: clamp(46px, 10vw, 120px); }
+        /* Mínimos y escala fluida subidos un poco para ganar presencia en móvil */
+        .icon-fb { max-width: clamp(52px, 12vw, 109px); }
+        .icon-ig { max-width: clamp(48px, 11vw, 100px); }
+        .icon-tk { max-width: clamp(49px, 11vw, 102px); }
+        .icon-x  { max-width: clamp(51px, 12vw, 108px); }
+        .icon-yt { max-width: clamp(58px, 13vw, 120px); }
 
         .social-icon:hover {
             opacity: 0.6;
