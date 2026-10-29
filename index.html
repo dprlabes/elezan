@@ -167,28 +167,42 @@
 
     </div>
 
-    <!-- Script de control: Precarga de recursos WebP y rotación de fondos -->
+    <!-- Script de control de carga ultrarrápido y seguro para móviles -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Recoge las imágenes WebP del menú y los fondos de la carpeta raíz
-            const menuImages = Array.from(document.images).map(img => img.src);
+            const contentDiv = document.getElementById('content');
+            
+            // 1. Seleccionamos solo las imágenes visibles principales (evitamos bloquear por el hover)
+            const mainImages = Array.from(document.querySelectorAll('.hover-effect > img:not(.top)')).map(img => img.src);
             const backgrounds = ['index/index1.jpg', 'index/index2.jpg'];
-            const allSources = [...menuImages, ...backgrounds];
+            const criticalAssets = [...mainImages, ...backgrounds];
             
             let loadedCount = 0;
-            const totalAssets = allSources.length;
+            const totalAssets = criticalAssets.length;
+            let safetyTriggered = false;
+
+            // Función para revelar el contenido de forma suave
+            function showContent() {
+                if (!safetyTriggered) {
+                    safetyTriggered = true;
+                    contentDiv.classList.remove('hidden');
+                }
+            }
 
             function assetLoaded() {
                 loadedCount++;
                 if (loadedCount >= totalAssets) {
-                    document.getElementById('content').classList.remove('hidden');
+                    showContent();
                 }
             }
 
+            // RED DE SEGURIDAD (Max 1200ms): Si la red móvil va lenta, muestra la página de todos modos
+            setTimeout(showContent, 1200);
+
             if (totalAssets === 0) {
-                document.getElementById('content').classList.remove('hidden');
+                showContent();
             } else {
-                allSources.forEach(src => {
+                criticalAssets.forEach(src => {
                     const tempImg = new Image();
                     tempImg.src = src;
                     tempImg.onload = assetLoaded;

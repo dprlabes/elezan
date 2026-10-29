@@ -190,16 +190,18 @@
 
     </div>
 
-    <!-- Script de control con red de seguridad anti-pantalla en blanco -->
+    <!-- Script de control optimizado para la página Info -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const contentDiv = document.getElementById('content');
-            const pageImages = Array.from(document.images).map(img => img.src);
-            const backgrounds = ['fondonubes.gif'];
-            const allSources = [...pageImages, ...backgrounds];
+            
+            // Seleccionamos específicamente la imagen de perfil principal
+            const profileImage = document.querySelector('.profile-img') ? document.querySelector('.profile-img').src : null;
+            const backgrounds = ['info/fondonubes.gif'];
+            const criticalAssets = profileImage ? [profileImage, ...backgrounds] : [...backgrounds];
             
             let loadedCount = 0;
-            const totalAssets = allSources.length;
+            const totalAssets = criticalAssets.length;
             let safetyTriggered = false;
 
             function showContent() {
@@ -216,13 +218,13 @@
                 }
             }
 
-            // Red de seguridad: si tras 1.5s alguna imagen no responde, muestra el contenido de todos modos
-            setTimeout(showContent, 1500);
+            // Red de seguridad reducida a 1000ms para que en móvil vuele
+            setTimeout(showContent, 1000);
 
             if (totalAssets === 0) {
                 showContent();
             } else {
-                allSources.forEach(src => {
+                criticalAssets.forEach(src => {
                     const tempImg = new Image();
                     tempImg.src = src;
                     tempImg.onload = assetLoaded;
