@@ -132,18 +132,18 @@
             overflow: hidden;
         }
 
-        .img-wrapper {
+       .img-wrapper {
             position: relative;
             display: inline-block;
-            max-width: 1080px; /* Límite estricto de 1080px para el lado más largo (horizontal) */
-            max-height: 1080px; /* Límite estricto de 1080px para el lado más largo (vertical) */
+            max-width: min(1080px, 100vw);  /* Garantiza que NUNCA supere el ancho de pantalla */
+            max-height: min(1080px, 100vh); /* Garantiza que deje espacio vertical para la barra y los puntos */
         }
 
         .modal-img-container img {
-            max-width: 1080px;  /* Ninguna imagen superará los 1080px de ancho */
-            max-height: 1080px; /* Ninguna imagen superará los 1080px de alto */
-            width: 100%;
-            height: 100%;
+            max-width: min(1080px, 100vw);  /* Se ajusta a lo ancho si la ventana es estrecha */
+            max-height: min(1080px, 100vh); /* Se ajusta a lo alto si la ventana es bajita */
+            width: auto;
+            height: auto;
             object-fit: contain;
             display: block;
             user-select: none;
