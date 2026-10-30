@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elezan - Commercial Works</title>
+    <meta name="description" content="Daniel Elezan @elezanes Painter, illustrator and designer">
+    
+    <!-- Favicon de la web -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Precarga del fondo animado en su carpeta correcta -->
+    <link rel="preload" as="image" href="commercialworks/fondotierra.gif">
+
+    <!-- Importación de la tipografía Inter Tight -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,480;0,700;1,300;1,480;1,700&display=swap" rel="stylesheet">
+
+    <style>
+        /* 1. RESET Y CONFIGURACIÓN GLOBAL */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body.artworks-page {
+            width: 100%;
+            min-height: 100vh;
+            background-image: url('commercialworks/fondotierra.gif');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: "Inter Tight", sans-serif;
+        }
+
+        /* 2. CONTROL DE CARGA INICIAL */
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #content {
+            opacity: 1;
+            visibility: visible;
+            width: 100%;
+            min-height: 100vh;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .artworks-wrapper {
+            width: 100%;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 40px 15px;
+        }
+
+        /* 3. GALERÍA COLLAGE EN ORDEN CRONOLÓGICO */
+        .artworks-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        .grid-item {
+            flex: 1 1 calc(33.333% - 1.34px);
+            max-width: calc(33.333% - 1.34px);
+            cursor: pointer;
+            overflow: visible !important;
+            display: block;
+        }
+
+        .grid-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.2s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .grid-item:hover img {
+            transform: scale(1.02);
+            z-index: 5;
+        }
+
+        /* 4. MODAL / CARRUSEL FLOTANTE 100% TRANSPARENTE E INSTANTÁNEO */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: none;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            position: relative;
+            width: auto;
+            max-width: 95vw;
+            height: auto;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Caja unificada que se ajusta exactamente al tamaño de la imagen activa */
+        .modal-content-box {
+            display: flex;
+            flex-direction: column;
+            width: auto;
+            height: auto;
+            max-width: 95vw;
+            max-height: 95vh;
+        }
+
+        /* Ventana contenedora principal adaptativa a la altura de la foto */
+        .modal-img-container {
+            width: 100%;
+            height: auto;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            cursor: grab;
+            overflow: hidden;
+            position: relative;
+            touch-action: pan-y;
+        }
+
+        .modal-img-container:active {
+            cursor: grabbing;
+        }
+
+        /* Tira horizontal deslizable */
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            will-change: transform;
+        }
+
+        .carousel-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            user-select: none;
+            height: auto;
+        }
+
+        .carousel-slide img {
+            max-width: min(1080px, 95vw);
+            max-height: calc(95vh - 40px);
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* Franja blanca inferior pegada milimétricamente al borde inferior de la imagen */
+        .modal-info-bar {
+            width: 100%;
+            background: #ffffff;
+            color: #000000;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .modal-desc {
+            font-weight: 480;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-right: 10px;
+        }
+
+        .download-link {
+            color: #000;
+            text-decoration: underline;
+            font-weight: 500;
+            font-size: 10px;
+            margin-left: 15px;
+            white-space: nowrap;
+        }
+
+        /* BARRA INFERIOR DE CÍRCULOS (INDICADORES) */
+        .modal-nav-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            width: 100%;
+            background: none;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 1.5px solid #000000;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .dot.active {
+            background: #000000;
+        }
+
+        .dot:hover {
+            opacity: 0.5;
+        }
+
+        /* Ajustes Responsivos Móvil */
+        @media (max-width: 768px) {
+            .grid-item {
+                flex: 1 1 calc(33.333% - 4px);
+                max-width: calc(33.333% - 4px);
+            }
+            .artworks-grid {
+                gap: 6px;
+            }
+            .modal-info-bar {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+
+<body class="artworks-page">
+
+    <!-- Contenedor principal -->
+    <div class="hidden" id="content">
+        <main class="artworks-wrapper">
+            <div class="artworks-grid" id="galleryGrid">
+                <!-- Portadas de la galería generadas dinámicamente -->
+            </div>
+        </main>
+    </div>
+
+    <!-- ESTRUCTURA DEL MODAL CARRUSEL -->
+    <div class="modal" id="carouselModal">
+        <div class="modal-container" id="modalContainer">
+            <!-- Caja unificada que contiene la imagen y la barra pegadas sin márgenes inferiores -->
+            <div class="modal-content-box" id="modalContentBox">
+                <div class="modal-img-container" id="modalImgContainer">
+                    <div class="carousel-track" id="carouselTrack">
+                        <!-- Las diapositivas se generan dinámicamente -->
+                    </div>
+                </div>
+
+                <div class="modal-info-bar" id="modalInfoBar">
+                    <span class="modal-desc" id="modalDesc">Detalle</span>
+                    <a href="#" target="_blank" rel="noopener noreferrer" id="downloadBtn" class="download-link">Open</a>
+                </div>
+            </div>
+
+            <!-- Barra inferior con círculos dinámicos -->
+            <div class="modal-nav-bar" id="modalNavBar">
+                <!-- Se generan automáticamente según el nº de fotos -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE GALERÍA Y CONTROLES -->
+    <script>
+        const projects = [
+            {
+                title: "Proyecto Comercial 1. 25",
+                images: ["rrss-eiuvbpweriubp.png", "rrss-wefwe1.png"]
+            },
+            {
+                title: "Proyecto Comercial 2. 25",
+                images: ["rrss-vevwerqr1.png"]
+            },
+            {
+                title: "Proyecto Comercial 3. 24",
+                images: ["rrss-wrb4rb1.png", "rrss-everfg1.png"]
+            }
+        ];
+
+        let currentProjectIndex = 0;
+        let currentImageIndex = 0;
+
+        const galleryGrid = document.getElementById('galleryGrid');
+        const modal = document.getElementById('carouselModal');
+        const modalContentBox = document.getElementById('modalContentBox');
+        const modalImgContainer = document.getElementById('modalImgContainer');
+        const carouselTrack = document.getElementById('carouselTrack');
+        const modalInfoBar = document.getElementById('modalInfoBar');
+        const modalDesc = document.getElementById('modalDesc');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const modalNavBar = document.getElementById('modalNavBar');
+
+        // Renderizar portadas en collage
+        projects.forEach((proj, pIndex) => {
+            const coverImg = proj.images[0];
+            const item = document.createElement('div');
+            item.className = 'grid-item';
+            item.innerHTML = `<img src="commercialworks/${coverImg}" alt="Artwork">`;
+            item.onclick = () => openCarousel(pIndex, 0);
+            galleryGrid.appendChild(item);
+        });
+
+        function openCarousel(projIdx, imgIdx) {
+            currentProjectIndex = projIdx;
+            currentImageIndex = imgIdx;
+            buildSlides();
+            buildDots();
+            
+            modal.classList.add('active');
+            setTimeout(updateLayout, 10);
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        function buildSlides() {
+            carouselTrack.innerHTML = '';
+            const currentProj = projects[currentProjectIndex];
+            
+            currentProj.images.forEach((imgName, idx) => {
+                const slide = document.createElement('div');
+                slide.className = 'carousel-slide';
+                const img = document.createElement('img');
+                img.src = `commercialworks/${imgName}`;
+                img.alt = "Artwork Large";
+                
+                img.onload = () => {
+                    updateSlideDimensions();
+                    if (idx === currentImageIndex) {
+                        updateLayout();
+                    }
+                };
+
+                slide.appendChild(img);
+                carouselTrack.appendChild(slide);
+            });
+        }
+
+        function updateSlideDimensions() {
+            const slides = carouselTrack.querySelectorAll('.carousel-slide');
+            slides.forEach(slide => {
+                const img = slide.querySelector('img');
+                if (img && img.getBoundingClientRect().width > 0) {
+                    const w = img.getBoundingClientRect().width;
+                    const h = img.getBoundingClientRect().height;
+                    slide.style.width = w + 'px';
+                    slide.style.height = h + 'px';
+                }
+            });
+        }
+
+        function buildDots() {
+            modalNavBar.innerHTML = '';
+            const currentProj = projects[currentProjectIndex];
+            
+            if (currentProj.images.length <= 1) {
+                modalNavBar.style.display = 'none';
+                return;
+            } else {
+                modalNavBar.style.display = 'flex';
+            }
+
+            currentProj.images.forEach((_, idx) => {
+                const dot = document.createElement('span');
+                dot.className = `dot ${idx === currentImageIndex ? 'active' : ''}`;
+                dot.onclick = (e) => {
+                    e.stopPropagation();
+                    currentImageIndex = idx;
+                    updateLayout(true);
+                };
+                modalNavBar.appendChild(dot);
+            });
+        }
+
+        // Función maestra que adapta el ancho y alto exactamente a cada imagen activa
+        function updateLayout(animate = true) {
+            updateSlideDimensions();
+            const slides = carouselTrack.querySelectorAll('.carousel-slide');
+            if (slides.length === 0 || !slides[currentImageIndex]) return;
+
+            const activeSlide = slides[currentImageIndex];
+            const activeImg = activeSlide.querySelector('img');
+            if (!activeImg) return;
+
+            const imgWidth = activeImg.getBoundingClientRect().width;
+            const imgHeight = activeImg.getBoundingClientRect().height;
+
+            if (imgWidth > 0 && imgHeight > 0) {
+                modalImgContainer.style.width = imgWidth + 'px';
+                modalImgContainer.style.height = imgHeight + 'px';
+                modalContentBox.style.width = imgWidth + 'px';
+
+                let targetX = 0;
+                for (let i = 0; i < currentImageIndex; i++) {
+                    const prevImg = slides[i].querySelector('img');
+                    targetX += prevImg ? prevImg.getBoundingClientRect().width : imgWidth;
+                }
+
+                if (animate) {
+                    carouselTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+                } else {
+                    carouselTrack.style.transition = 'none';
+                }
+                carouselTrack.style.transform = `translateX(-${targetX}px)`;
+            }
+
+            const currentProj = projects[currentProjectIndex];
+            const imgSrc = `commercialworks/${currentProj.images[currentImageIndex]}`;
+            modalDesc.textContent = currentProj.title;
+            downloadBtn.href = imgSrc;
+
+            updateDotsUI();
+        }
+
+        function updateDotsUI() {
+            const dots = modalNavBar.querySelectorAll('.dot');
+            dots.forEach((dot, idx) => {
+                if (idx === currentImageIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        // BUCLE INFINITO EN ORDEN ESTRICTO DE 1 EN 1
+        function nextImage(animate = true) {
+            const currentProj = projects[currentProjectIndex];
+            if (currentProj.images.length <= 1) return;
+            currentImageIndex = (currentImageIndex + 1) % currentProj.images.length;
+            updateLayout(animate);
+        }
+
+        // Recalcular dimensiones si cambia el tamaño de la ventana
+        window.addEventListener('resize', () => {
+            if (modal.classList.contains('active')) {
+                updateLayout(false);
+            }
+        });
+
+        // CONTROL UNIFICADO DE PUNTERO (POINTER EVENTS) PARA ESCRITORIO Y MÓVIL SIN DUPLICADOS
+        let startX = 0;
+        let startY = 0;
+        let currentTranslateX = 0;
+        let isDragging = false;
+        let hasMoved = false;
+
+        modalImgContainer.addEventListener('pointerdown', (e) => {
+            isDragging = true;
+            hasMoved = false;
+            startX = e.clientX;
+            startY = e.clientY;
+
+            const slides = carouselTrack.querySelectorAll('.carousel-slide');
+            currentTranslateX = 0;
+            for (let i = 0; i < currentImageIndex; i++) {
+                const img = slides[i].querySelector('img');
+                currentTranslateX += img ? img.getBoundingClientRect().width : 0;
+            }
+
+            carouselTrack.style.transition = 'none';
+            modalImgContainer.setPointerCapture(e.pointerId);
+        });
+
+        modalImgContainer.addEventListener('pointermove', (e) => {
+            if (!isDragging) return;
+            const diffX = e.clientX - startX;
+            const diffY = e.clientY - startY;
+            
+            if (Math.abs(diffX) > 6 || Math.abs(diffY) > 6) {
+                hasMoved = true;
+                carouselTrack.style.transform = `translateX(${-currentTranslateX + diffX}px)`;
+            }
+        });
+
+        modalImgContainer.addEventListener('pointerup', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            const slides = carouselTrack.querySelectorAll('.carousel-slide');
+            if (slides.length === 0) return;
+
+            // SI NO HUBO MOVIMIENTO: CLIC / TAP SIMPLE EN ORDEN ESTRICTO DE 1 EN 1 CON BUCLE INFINITO
+            if (!hasMoved) {
+                nextImage(false);
+                return;
+            }
+
+            const activeImg = slides[currentImageIndex].querySelector('img');
+            const slideWidth = activeImg ? activeImg.getBoundingClientRect().width : 300;
+            const diffX = e.clientX - startX;
+            const currentProj = projects[currentProjectIndex];
+
+            if (diffX < -slideWidth * 0.15 && currentImageIndex < currentProj.images.length - 1) {
+                currentImageIndex++;
+            } else if (diffX > slideWidth * 0.15 && currentImageIndex > 0) {
+                currentImageIndex--;
+            }
+
+            updateLayout(true);
+        });
+
+        // CIERRE AL HACER CLIC FUERA
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        };
+
+        // Teclado
+        document.addEventListener('keydown', (e) => {
+            if (!modal.classList.contains('active')) return;
+            if (e.key === 'ArrowRight') nextImage(true);
+            if (e.key === 'ArrowLeft') prevImage(true);
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // PRECARGA INTELIGENTE
+        document.addEventListener("DOMContentLoaded", function() {
+            const contentDiv = document.getElementById('content');
+            
+            const criticalImages = [
+                'commercialworks/fondotierra.gif',
+                ...projects.map(proj => `commercialworks/${proj.images[0]}`)
+            ];
+
+            const secondaryImages = projects.flatMap(proj => proj.images.slice(1).map(img => `commercialworks/${img}`));
+
+            let loadedCount = 0;
+            const totalCritical = criticalImages.length;
+
+            if (totalCritical === 0) {
+                contentDiv.classList.remove('hidden');
+                return;
+            }
+
+            criticalImages.forEach(src => {
+                const img = new Image();
+                img.src = src;
+                img.onload = () => {
+                    loadedCount++;
+                    if (loadedCount === totalCritical) {
+                        contentDiv.classList.remove('hidden');
+                        secondaryImages.forEach(secSrc => {
+                            const bgImg = new Image();
+                            bgImg.src = secSrc;
+                        });
+                    }
+                };
+                img.onerror = () => {
+                    loadedCount++;
+                    if (loadedCount === totalCritical) {
+                        contentDiv.classList.remove('hidden');
+                    }
+                };
+            });
+        });
+    </script>
+</body>
+</html>
