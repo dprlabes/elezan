@@ -143,6 +143,7 @@
             cursor: grab;
             overflow: hidden;
             position: relative;
+            touch-action: pan-y; /* Permite gestión táctil fluida */
         }
 
         .modal-img-container:active {
@@ -464,18 +465,11 @@
             });
         }
 
-        // BUCLE INFINITO: Al llegar al final vuelve a la primera (0)
+        // BUCLE INFINITO EN ORDEN ESTRICTO
         function nextImage(animate = true) {
             const currentProj = projects[currentProjectIndex];
             if (currentProj.images.length <= 1) return;
             currentImageIndex = (currentImageIndex + 1) % currentProj.images.length;
-            updateLayout(animate);
-        }
-
-        function prevImage(animate = true) {
-            const currentProj = projects[currentProjectIndex];
-            if (currentProj.images.length <= 1) return;
-            currentImageIndex = (currentImageIndex - 1 + currentProj.images.length) % currentProj.images.length;
             updateLayout(animate);
         }
 
@@ -486,7 +480,7 @@
             }
         });
 
-        // CONTROL ROBUSTO DE ARRASTRE Y CLIC (SEPARADO ESCRITORIO Y MÓVIL)
+        // CONTROL TÁCTIL Y DE RATÓN EXCLUSIVO Y LIMPIO
         let startX = 0;
         let startY = 0;
         let currentTranslateX = 0;
@@ -528,7 +522,7 @@
             if (slides.length === 0) return;
 
             if (!hasMoved) {
-                nextImage(false); // Clic simple avanza en bucle infinito al instante
+                nextImage(false); // Clic/Tap simple avanza estrictamente de 1 en 1 en bucle
                 return;
             }
 
@@ -546,31 +540,35 @@
             updateLayout(true);
         }
 
-        // Eventos Táctiles puros para Smartphone (evita conflictos de eventos duplicados)
+        // GESTIÓN MÓVIL AISLADA (Evita disparos duplicados o saltos extraños)
         let touchStartX = 0;
         let touchStartY = 0;
         let touchHasMoved = false;
 
         modalImgContainer.addEventListener('touchstart', (e) => {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            touchHasMoved = false;
-            handleStart(touchStartX, touchStartY);
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                touchHasMoved = false;
+                handleStart(touchStartX, touchStartY);
+            }
         }, { passive: true });
 
         modalImgContainer.addEventListener('touchmove', (e) => {
-            const currentX = e.touches[0].clientX;
-            const currentY = e.touches[0].clientY;
-            if (Math.abs(currentX - touchStartX) > 6 || Math.abs(currentY - touchStartY) > 6) {
-                touchHasMoved = true;
+            if (e.touches.length === 1) {
+                const currentX = e.touches[0].clientX;
+                const currentY = e.touches[0].clientY;
+                if (Math.abs(currentX - touchStartX) > 6 || Math.abs(currentY - touchStartY) > 6) {
+                    touchHasMoved = true;
+                }
+                handleMove(currentX, currentY);
             }
-            handleMove(currentX, currentY);
         }, { passive: true });
 
         modalImgContainer.addEventListener('touchend', (e) => {
             if (!touchHasMoved) {
                 isDragging = false;
-                nextImage(false); // Tap limpio en móvil avanza foto al instante en bucle
+                nextImage(false); // Tap limpio en móvil avanza estrictamente de uno en uno
                 return;
             }
             const endX = e.changedTouches[0] ? e.changedTouches[0].clientX : touchStartX;
