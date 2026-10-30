@@ -464,6 +464,7 @@
             });
         }
 
+        // BUCLE INFINITO: Al llegar al final vuelve a la primera (0)
         function nextImage(animate = true) {
             const currentProj = projects[currentProjectIndex];
             if (currentProj.images.length <= 1) return;
@@ -485,7 +486,7 @@
             }
         });
 
-        // CONTROL LIMPIO DE ARRASTRE Y CLIC SIMPLE
+        // CONTROL ROBUSTO DE ARRASTRE Y CLIC (SEPARADO ESCRITORIO Y MÓVIL)
         let startX = 0;
         let startY = 0;
         let currentTranslateX = 0;
@@ -513,7 +514,6 @@
             const diffX = clientX - startX;
             const diffY = clientY - startY;
             
-            // Si el movimiento supera los 6 píxeles, se considera un arrastre real
             if (Math.abs(diffX) > 6 || Math.abs(diffY) > 6) {
                 hasMoved = true;
                 carouselTrack.style.transform = `translateX(${-currentTranslateX + diffX}px)`;
@@ -527,9 +527,8 @@
             const slides = carouselTrack.querySelectorAll('.carousel-slide');
             if (slides.length === 0) return;
 
-            // SI NO HUBO MOVIMIENTO REAL, ES UN CLIC SIMPLE DIRECTO -> PASA A LA SIGUIENTE FOTO AL INSTANTE
             if (!hasMoved) {
-                nextImage(false);
+                nextImage(false); // Clic simple avanza en bucle infinito al instante
                 return;
             }
 
@@ -547,12 +546,38 @@
             updateLayout(true);
         }
 
-        // Eventos Táctiles (Móvil)
-        modalImgContainer.addEventListener('touchstart', (e) => handleStart(e.touches[0].clientX, e.touches[0].clientY));
-        modalImgContainer.addEventListener('touchmove', (e) => handleMove(e.touches[0].clientX, e.touches[0].clientY));
-        modalImgContainer.addEventListener('touchend', (e) => handleEnd(e.changedTouches[0].clientX));
+        // Eventos Táctiles puros para Smartphone (evita conflictos de eventos duplicados)
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchHasMoved = false;
 
-        // Eventos de Ratón (Escritorio)
+        modalImgContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchHasMoved = false;
+            handleStart(touchStartX, touchStartY);
+        }, { passive: true });
+
+        modalImgContainer.addEventListener('touchmove', (e) => {
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            if (Math.abs(currentX - touchStartX) > 6 || Math.abs(currentY - touchStartY) > 6) {
+                touchHasMoved = true;
+            }
+            handleMove(currentX, currentY);
+        }, { passive: true });
+
+        modalImgContainer.addEventListener('touchend', (e) => {
+            if (!touchHasMoved) {
+                isDragging = false;
+                nextImage(false); // Tap limpio en móvil avanza foto al instante en bucle
+                return;
+            }
+            const endX = e.changedTouches[0] ? e.changedTouches[0].clientX : touchStartX;
+            handleEnd(endX);
+        });
+
+        // Eventos de Ratón para Escritorio
         modalImgContainer.addEventListener('mousedown', (e) => {
             e.preventDefault();
             handleStart(e.clientX, e.clientY);
