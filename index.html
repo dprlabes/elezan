@@ -156,18 +156,24 @@
         </main>
     </div>
 
-    <!-- SCRIPT DE CAMBIO DE FONDO DINÁMICO -->
+    <!-- SCRIPT DE CAMBIO DE FONDO DINÁMICO Y ALEATORIO -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const backgrounds = ['index/index1.jpg', 'index/index2.jpg'];
+            
+            // Elegimos una imagen aleatoria para empezar al cargar la página
             let currentIndex = Math.floor(Math.random() * backgrounds.length);
 
             function changeBackground() {
                 document.body.style.backgroundImage = `url('${backgrounds[currentIndex]}')`;
+                // Pasamos a la siguiente de forma cíclica (y seguirá alternando cada 10 segundos)
                 currentIndex = (currentIndex + 1) % backgrounds.length;
             }
 
+            // Aplicamos el fondo aleatorio inicial de inmediato
             changeBackground();
+
+            // Configuramos el intervalo para que siga rotando cada 10 segundos
             setInterval(changeBackground, 10000);
         });
     </script>
