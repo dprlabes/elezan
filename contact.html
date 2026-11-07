@@ -9,9 +9,6 @@
     <!-- Favicon de la web -->
     <link rel="icon" type="image/png" href="favicon.png">
 
-    <!-- Precarga del fondo animado para transición instantánea -->
-    <link rel="preload" as="image" href="contact/fondofuego.gif">
-
     <!-- Importación de la tipografía Inter Tight -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,18 +34,9 @@
             font-family: "Sans-serif", sans-serif;
         }
 
-        /* 2. CONTROL DE CARGA INICIAL */
-        .hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
         #content {
-            opacity: 1;
-            visibility: visible;
             width: 100%;
             min-height: 100vh;
-            transition: opacity 0.5s ease-in-out;
         }
 
         .contact-wrapper {
@@ -110,34 +98,34 @@
             outline: 2px solid #000;
         }
 
-      /* 5. CASILLA DE PRIVACIDAD (Checkbox más grande) */
-.privacy-consent {
-    font-size: 13px;
-    color: #000;
-    line-height: 1.4; 
-}
+        /* 5. CASILLA DE PRIVACIDAD (Checkbox más grande) */
+        .privacy-consent {
+            font-size: 13px;
+            color: #000;
+            line-height: 1.4; 
+        }
 
-.custom-checkbox-container {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    cursor: pointer;
-}
+        .custom-checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            cursor: pointer;
+        }
 
-/* Tamaño del cuadro de check ampliado */
-.custom-checkbox-container input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    margin-top: -2px; /* Prueba con -2px, -3px o -4px para bajarlo milimétricamente hasta alinearlo perfecto */
-    cursor: pointer;
-    accent-color: #000;
-    flex-shrink: 0;
-}
+        /* Tamaño del cuadro de check ampliado */
+        .custom-checkbox-container input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: -2px; /* Prueba con -2px, -3px o -4px para bajarlo milimétricamente hasta alinearlo perfecto */
+            cursor: pointer;
+            accent-color: #000;
+            flex-shrink: 0;
+        }
 
-.checkbox-label-text a {
-    color: #000;
-    text-decoration: underline;
-}
+        .checkbox-label-text a {
+            color: #000;
+            text-decoration: underline;
+        }
 
         /* 6. BOTÓN DE ENVÍO */
         .btn-container {
@@ -181,7 +169,7 @@
             text-decoration: underline;
         }
 
-   /* 8. REDES SOCIALES (Ajustadas ligeramente más grandes para smartphones) */
+        /* 8. REDES SOCIALES (Ajustadas ligeramente más grandes para smartphones) */
         .social-row {
             display: flex;
             justify-content: center;
@@ -226,13 +214,12 @@
 
 <body class="contact-page">
 
-    <!-- Contenedor principal oculto hasta que carguen los recursos -->
-    <div class="hidden" id="content">
+    <div id="content">
 
         <main class="contact-wrapper">
             
             <!-- Imagen Cabecera (SEND ME AN E-MAIL) -->
-            <img src="contact/sendmeaemail.webp" alt="SEND ME AN EMAIL" class="header-img">
+            <img src="contact/sendmeaemail.webp" alt="SEND ME AN EMAIL" class="header-img" loading="lazy">
 
             <!-- Formulario Formspree -->
             <form action="https://formspree.io/f/mpwqdykw" method="POST" class="contact-form">
@@ -274,103 +261,22 @@
             <!-- Redes Sociales Abajo -->
             <nav class="social-row">
                 <a href="https://instagram.com/elezanes" target="_blank" rel="noopener noreferrer">
-                    <img src="contact/instagram.webp" alt="Instagram" class="social-icon icon-ig">
+                    <img src="contact/instagram.webp" alt="Instagram" class="social-icon icon-ig" loading="lazy">
                 </a>
                 <a href="https://tiktok.com/@elezanes" target="_blank" rel="noopener noreferrer">
-                    <img src="contact/tiktok.webp" alt="TikTok" class="social-icon icon-tk">
+                    <img src="contact/tiktok.webp" alt="TikTok" class="social-icon icon-tk" loading="lazy">
                 </a>
                 <a href="https://youtube.com/@elezanes" target="_blank" rel="noopener noreferrer">
-                    <img src="contact/youtube.webp" alt="YouTube" class="social-icon icon-yt">
+                    <img src="contact/youtube.webp" alt="YouTube" class="social-icon icon-yt" loading="lazy">
                 </a>
                 <a href="https://x.com/elezanes" target="_blank" rel="noopener noreferrer">
-                    <img src="contact/X-twitter.webp" alt="X Twitter" class="social-icon icon-x">
+                    <img src="contact/X-twitter.webp" alt="X Twitter" class="social-icon icon-x" loading="lazy">
                 </a>
             </nav>
 
         </main>
 
     </div>
-
-    <!-- Script de control de carga optimizado con red de seguridad -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const contentDiv = document.getElementById('content');
-            
-            // Selecciona las imágenes principales y el fondo para precargarlos
-            const pageImages = Array.from(document.querySelectorAll('.header-img, .social-icon')).map(img => img.src);
-            const backgrounds = ['contact/fondofuego.gif'];
-            const criticalAssets = [...pageImages, ...backgrounds];
-            
-            let loadedCount = 0;
-            const totalAssets = criticalAssets.length;
-            let safetyTriggered = false;
-
-            function showContent() {
-                if (!safetyTriggered) {
-                    safetyTriggered = true;
-                    contentDiv.classList.remove('hidden');
-                }
-            }
-
-            function assetLoaded() {
-                loadedCount++;
-                if (loadedCount >= totalAssets) {
-                    showContent();
-                }
-            }
-
-            // Red de seguridad de 1000ms para móviles o redes lentas
-            setTimeout(showContent, 1000);
-
-            if (totalAssets === 0) {
-                showContent();
-            } else {
-                criticalAssets.forEach(src => {
-                    const tempImg = new Image();
-                    tempImg.src = src;
-                    tempImg.onload = assetLoaded;
-                    tempImg.onerror = assetLoaded;
-                });
-            }
-        });
-
-        // CONTROL DE PRECARGA REAL DE IMÁGENES
-        document.addEventListener("DOMContentLoaded", function() {
-            const contentDiv = document.getElementById('content');
-            
-            // Recopilamos todas las rutas de imágenes que queremos precargar
-            // (Incluimos el fondo y las portadas de la galería)
-            const imagesToPreload = [
-                'artworks/fondoagua.gif',
-                ...projects.map(proj => `artworks/${proj.images[0]}`)
-            ];
-
-            let loadedCount = 0;
-            const totalImages = imagesToPreload.length;
-
-            if (totalImages === 0) {
-                contentDiv.classList.remove('hidden');
-                return;
-            }
-
-            // Función que comprueba si ya se han descargado todas
-            function imageLoaded() {
-                loadedCount++;
-                if (loadedCount === totalImages) {
-                    // Una vez que están todas en caché, mostramos la web de golpe
-                    contentDiv.classList.remove('hidden');
-                }
-            }
-
-            // Disparamos la carga en segundo plano de cada imagen
-            imagesToPreload.forEach(src => {
-                const img = new Image();
-                img.src = src;
-                img.onload = imageLoaded;
-                img.onerror = imageLoaded; // Por si alguna falla, para que no se quede bloqueado
-            });
-        });
-    </script>
 
 </body>
 </html>

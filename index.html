@@ -10,9 +10,10 @@
     <!-- Favicon de la web -->
     <link rel="icon" type="image/png" href="favicon.png">
 
-    <!-- Precarga de los fondos para transiciones instantáneas -->
-    <link rel="preload" as="image" href="index/index1.jpg">
-    <link rel="preload" as="image" href="index/index2.jpg">
+    <!-- Importación de la tipografía Inter Tight -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,480;0,700;1,300;1,480;1,700&display=swap" rel="stylesheet">
 
     <style>
         /* 1. RESET Y CONFIGURACIÓN GLOBAL */
@@ -31,23 +32,15 @@
             background-size: cover;
             background-attachment: fixed;
             transition: background-image 1s ease-in-out;
-        }
-
-        /* 2. CONTROL DE CARGA INICIAL */
-        .hidden {
-            opacity: 0;
-            visibility: hidden;
+            font-family: "Inter Tight", sans-serif;
         }
 
         #content {
-            opacity: 1;
-            visibility: visible;
             width: 100%;
             min-height: 100vh;
-            transition: opacity 0.5s ease-in-out;
         }
 
-        /* 3. MENÚ CENTRADO FLEXBOX */
+        /* 2. MENÚ CENTRADO FLEXBOX */
         .menu-container {
             width: 100%;
             min-height: 100vh;
@@ -65,7 +58,7 @@
             width: 100%;
         }
 
-        /* 4. ESTRUCTURA DE BOTONES Y ANIMACIONES SIN SOLAPAMIENTO */
+        /* 3. ESTRUCTURA DE BOTONES Y ANIMACIONES SIN SOLAPAMIENTO */
         .hover-effect {
             position: relative;
             display: inline-block;
@@ -103,15 +96,13 @@
             opacity: 1;
         }
 
- /* 5. ANCHOS MÁXIMOS PARA JERARQUÍA EN ESCRITORIO */
+        /* 4. ANCHOS MÁXIMOS PARA JERARQUÍA EN ESCRITORIO */
         .btn-art { max-width: 563px; }
         .btn-commercial { max-width: 784px; }
         .btn-contact { max-width: 444px; }
-        .btn-info { 
-            max-width: 202px; 
-        }
+        .btn-info { max-width: 202px; }
 
-        /* 6. DISEÑO RESPONSIVE */
+        /* 5. DISEÑO RESPONSIVE */
         @media (max-width: 1024px) {
             .art-menu { gap: 16px; }
             .btn-art { max-width: 60vw; }
@@ -133,85 +124,42 @@
 
 <body>
 
-    <!-- Contenedor principal oculto hasta que carguen las imágenes y fondos -->
-    <div class="hidden" id="content">
-        
+    <div id="content">
         <main class="menu-container">
             <nav class="art-menu">
                 
                 <!-- ART WORKS -->
                 <a class="hover-effect" href="artworks.html">
-                    <img alt="Art Works" class="button-img btn-art" src="index/artworks.webp" />
+                    <img alt="Art Works" class="button-img btn-art" src="index/artworks.webp" loading="lazy" />
                     <img alt="Art Works Hover" class="button-img top btn-art" src="index/artworks-s.webp" />
                 </a>
 
                 <!-- COMMERCIAL WORKS -->
                 <a class="hover-effect" href="commercialworks.html">
-                    <img alt="Commercial Works" class="button-img btn-commercial" src="index/comercialworks.webp" />
+                    <img alt="Commercial Works" class="button-img btn-commercial" src="index/comercialworks.webp" loading="lazy" />
                     <img alt="Commercial Works Hover" class="button-img top btn-commercial" src="index/comercialworks-s.webp" />
                 </a>
 
                 <!-- CONTACT -->
                 <a class="hover-effect" href="contact.html">
-                    <img alt="Contact" class="button-img btn-contact" src="index/contact.webp" />
+                    <img alt="Contact" class="button-img btn-contact" src="index/contact.webp" loading="lazy" />
                     <img alt="Contact Hover" class="button-img top btn-contact" src="index/contact-s.webp" />
                 </a>
 
                 <!-- INFO -->
                 <a class="hover-effect" href="info.html">
-                    <img alt="Info" class="button-img btn-info" src="index/info.webp" />
+                    <img alt="Info" class="button-img btn-info" src="index/info.webp" loading="lazy" />
                     <img alt="Info Hover" class="button-img top btn-info" src="index/info-s.webp" />
                 </a>
 
             </nav>
         </main>
-
     </div>
 
-    <!-- Script de control de carga ultrarrápido y seguro para móviles -->
+    <!-- SCRIPT DE CAMBIO DE FONDO DINÁMICO -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const contentDiv = document.getElementById('content');
-            
-            // 1. Seleccionamos solo las imágenes visibles principales (evitamos bloquear por el hover)
-            const mainImages = Array.from(document.querySelectorAll('.hover-effect > img:not(.top)')).map(img => img.src);
             const backgrounds = ['index/index1.jpg', 'index/index2.jpg'];
-            const criticalAssets = [...mainImages, ...backgrounds];
-            
-            let loadedCount = 0;
-            const totalAssets = criticalAssets.length;
-            let safetyTriggered = false;
-
-            // Función para revelar el contenido de forma suave
-            function showContent() {
-                if (!safetyTriggered) {
-                    safetyTriggered = true;
-                    contentDiv.classList.remove('hidden');
-                }
-            }
-
-            function assetLoaded() {
-                loadedCount++;
-                if (loadedCount >= totalAssets) {
-                    showContent();
-                }
-            }
-
-            // RED DE SEGURIDAD (Max 1200ms): Si la red móvil va lenta, muestra la página de todos modos
-            setTimeout(showContent, 1200);
-
-            if (totalAssets === 0) {
-                showContent();
-            } else {
-                criticalAssets.forEach(src => {
-                    const tempImg = new Image();
-                    tempImg.src = src;
-                    tempImg.onload = assetLoaded;
-                    tempImg.onerror = assetLoaded;
-                });
-            }
-
-            // Cambiar fondo aleatoriamente cada 10 segundos
             let currentIndex = Math.floor(Math.random() * backgrounds.length);
 
             function changeBackground() {
@@ -221,43 +169,6 @@
 
             changeBackground();
             setInterval(changeBackground, 10000);
-        });
-
-        // CONTROL DE PRECARGA REAL DE IMÁGENES
-        document.addEventListener("DOMContentLoaded", function() {
-            const contentDiv = document.getElementById('content');
-            
-            // Recopilamos todas las rutas de imágenes que queremos precargar
-            // (Incluimos el fondo y las portadas de la galería)
-            const imagesToPreload = [
-                'artworks/fondoagua.gif',
-                ...projects.map(proj => `artworks/${proj.images[0]}`)
-            ];
-
-            let loadedCount = 0;
-            const totalImages = imagesToPreload.length;
-
-            if (totalImages === 0) {
-                contentDiv.classList.remove('hidden');
-                return;
-            }
-
-            // Función que comprueba si ya se han descargado todas
-            function imageLoaded() {
-                loadedCount++;
-                if (loadedCount === totalImages) {
-                    // Una vez que están todas en caché, mostramos la web de golpe
-                    contentDiv.classList.remove('hidden');
-                }
-            }
-
-            // Disparamos la carga en segundo plano de cada imagen
-            imagesToPreload.forEach(src => {
-                const img = new Image();
-                img.src = src;
-                img.onload = imageLoaded;
-                img.onerror = imageLoaded; // Por si alguna falla, para que no se quede bloqueado
-            });
         });
     </script>
 
