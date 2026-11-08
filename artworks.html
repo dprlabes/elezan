@@ -541,20 +541,18 @@
             }
         });
 
-        // CONTROL DE ARRASTRE DE RATÓN
+        // CONTROL UNIFICADO DE ARRASTRE (RATÓN Y TÁCTIL)
         let startX = 0;
         let startY = 0;
         let currentTranslateX = 0;
         let isDragging = false;
         let hasMoved = false;
 
-        modalImgContainer.addEventListener('mousedown', (e) => {
-            if (e.button !== 0 || isTransitioning) return;
-
+        function startDrag(clientX) {
+            if (isTransitioning) return;
             isDragging = true;
             hasMoved = false;
-            startX = e.clientX;
-            startY = e.clientY;
+            startX = clientX;
 
             const slides = carouselTrack.querySelectorAll('.carousel-slide');
             currentTranslateX = 0;
@@ -564,20 +562,19 @@
             }
 
             carouselTrack.style.transition = 'none';
-        });
+        }
 
-        window.addEventListener('mousemove', (e) => {
+        function moveDrag(clientX) {
             if (!isDragging) return;
-            const diffX = e.clientX - startX;
-            const diffY = e.clientY - startY;
+            const diffX = clientX - startX;
             
-            if (Math.abs(diffX) > 6 || Math.abs(diffY) > 6) {
+            if (Math.abs(diffX) > 6) {
                 hasMoved = true;
                 carouselTrack.style.transform = `translateX(${-currentTranslateX + diffX}px)`;
             }
-        });
+        }
 
-        window.addEventListener('mouseup', (e) => {
+        function endDrag(clientX) {
             if (!isDragging) return;
             isDragging = false;
 
@@ -586,7 +583,7 @@
 
             const activeImg = slides[virtualIndex].querySelector('img');
             const slideWidth = activeImg ? activeImg.getBoundingClientRect().width : 300;
-            const diffX = e.clientX - startX;
+            const diffX = clientX - startX;
 
             if (diffX < -slideWidth * 0.15) {
                 nextImage(true);
@@ -594,6 +591,39 @@
                 prevImage(true);
             } else {
                 updateLayout(true);
+            }
+        }
+
+        // Eventos de Ratón (Desktop)
+        modalImgContainer.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return;
+            startDrag(e.clientX);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            moveDrag(e.clientX);
+        });
+
+        window.addEventListener('mouseup', (e) => {
+            endDrag(e.clientX);
+        });
+
+        // Eventos Táctiles (Smartphones y Tablets)
+        modalImgContainer.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0) {
+                startDrag(e.touches[0].clientX);
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                moveDrag(e.touches[0].clientX);
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchend', (e) => {
+            if (e.changedTouches.length > 0) {
+                endDrag(e.changedTouches[0].clientX);
             }
         });
 
