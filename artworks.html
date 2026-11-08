@@ -46,7 +46,7 @@
             padding: 40px 15px;
         }
 
-        /* 2. GALERÍA COLLAGE ORGÁNICO (IMÁGENES COMPLETas SIN CORTES) */
+        /* 2. GALERÍA PRINCIPAL */
         .artworks-grid {
             display: flex;
             flex-wrap: wrap;
@@ -91,7 +91,7 @@
             z-index: 9999;
             opacity: 0;
             pointer-events: none;
-            transition: none;
+            transition: opacity 0.2s ease;
         }
 
         .modal.active {
@@ -118,6 +118,7 @@
             height: auto;
             max-width: 95vw;
             max-height: 95vh;
+            background: transparent;
         }
 
         .modal-img-container {
@@ -159,7 +160,8 @@
             object-fit: contain;
             display: block;
             user-select: none;
-            pointer-events: none;
+            pointer-events: auto;
+            -webkit-user-drag: none;
         }
 
         .modal-info-bar {
@@ -298,6 +300,11 @@
 
         let currentProjectIndex = 0;
         let currentImageIndex = 0;
+        let virtualIndex = 1;
+        let isTransitioning = false;
+        let isMenuOpen = false; // Candado permanente para el clic derecho
+
+        const transitionDuration = 480; // ms
 
         const galleryGrid = document.getElementById('galleryGrid');
         const modal = document.getElementById('carouselModal');
@@ -309,7 +316,7 @@
         const downloadBtn = document.getElementById('downloadBtn');
         const modalNavBar = document.getElementById('modalNavBar');
 
-        // Renderizar portadas en collage orgánico respetando proporciones
+        // Renderizar galería principal
         projects.forEach((proj, pIndex) => {
             const coverImg = proj.images[0];
             const item = document.createElement('div');
@@ -322,6 +329,7 @@
         function openCarousel(projIdx, imgIdx) {
             currentProjectIndex = projIdx;
             currentImageIndex = imgIdx;
+            isMenuOpen = false;
             
             buildSlides();
             buildDots();
@@ -329,39 +337,70 @@
             carouselTrack.style.transition = 'none';
             carouselTrack.style.transform = 'translateX(0px)';
 
+            const currentProj = projects[currentProjectIndex];
+            virtualIndex = currentProj.images.length > 1 ? currentImageIndex + 1 : 0;
+
             updateLayout(false);
             modal.classList.add('active');
         }
 
         function closeModal() {
             modal.classList.remove('active');
+            isDragging = false;
+            hasMoved = false;
+            isMenuOpen = false;
+
             setTimeout(() => {
                 carouselTrack.style.transition = 'none';
                 carouselTrack.style.transform = 'translateX(0px)';
+                carouselTrack.innerHTML = '';
             }, 200);
+        }
+
+        function createSlideElement(imgName) {
+            const slide = document.createElement('div');
+            slide.className = 'carousel-slide';
+            const img = document.createElement('img');
+            img.src = `artworks/${imgName}`;
+            img.alt = "Artwork Large";
+            
+            // Activamos el candado permanente al abrir el menú contextual
+            img.addEventListener('contextmenu', (e) => {
+                e.stopPropagation();
+                isMenuOpen = true;
+            });
+
+            // Si el menú estaba abierto, el primer clic izquierdo solo lo cierra y frena el avance
+            img.addEventListener('click', (e) => {
+                if (isMenuOpen) {
+                    e.stopPropagation();
+                    isMenuOpen = false; // Desactivamos el candado para el siguiente clic normal
+                } else {
+                    nextImage(true);
+                }
+            });
+
+            img.onload = () => {
+                updateSlideDimensions();
+                updateLayout(false);
+            };
+
+            slide.appendChild(img);
+            return slide;
         }
 
         function buildSlides() {
             carouselTrack.innerHTML = '';
             const currentProj = projects[currentProjectIndex];
-            
-            currentProj.images.forEach((imgName, idx) => {
-                const slide = document.createElement('div');
-                slide.className = 'carousel-slide';
-                const img = document.createElement('img');
-                img.src = `artworks/${imgName}`;
-                img.alt = "Artwork Large";
-                
-                img.onload = () => {
-                    updateSlideDimensions();
-                    if (idx === currentImageIndex) {
-                        updateLayout(false);
-                    }
-                };
+            const imgs = currentProj.images;
 
-                slide.appendChild(img);
-                carouselTrack.appendChild(slide);
-            });
+            if (imgs.length > 1) {
+                carouselTrack.appendChild(createSlideElement(imgs[imgs.length - 1]));
+                imgs.forEach(imgName => carouselTrack.appendChild(createSlideElement(imgName)));
+                carouselTrack.appendChild(createSlideElement(imgs[0]));
+            } else {
+                imgs.forEach(imgName => carouselTrack.appendChild(createSlideElement(imgName)));
+            }
         }
 
         function updateSlideDimensions() {
@@ -393,7 +432,9 @@
                 dot.className = `dot ${idx === currentImageIndex ? 'active' : ''}`;
                 dot.onclick = (e) => {
                     e.stopPropagation();
+                    if (isTransitioning) return;
                     currentImageIndex = idx;
+                    virtualIndex = idx + 1;
                     updateLayout(true);
                 };
                 modalNavBar.appendChild(dot);
@@ -403,9 +444,9 @@
         function updateLayout(animate = true) {
             updateSlideDimensions();
             const slides = carouselTrack.querySelectorAll('.carousel-slide');
-            if (slides.length === 0 || !slides[currentImageIndex]) return;
+            if (slides.length === 0 || !slides[virtualIndex]) return;
 
-            const activeSlide = slides[currentImageIndex];
+            const activeSlide = slides[virtualIndex];
             const activeImg = activeSlide.querySelector('img');
             if (!activeImg) return;
 
@@ -418,13 +459,13 @@
                 modalContentBox.style.width = imgWidth + 'px';
 
                 let targetX = 0;
-                for (let i = 0; i < currentImageIndex; i++) {
+                for (let i = 0; i < virtualIndex; i++) {
                     const prevImg = slides[i].querySelector('img');
                     targetX += prevImg ? prevImg.getBoundingClientRect().width : imgWidth;
                 }
 
                 if (animate) {
-                    carouselTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+                    carouselTrack.style.transition = `transform ${transitionDuration}ms cubic-bezier(0.25, 1, 0.5, 1)`;
                 } else {
                     carouselTrack.style.transition = 'none';
                 }
@@ -452,16 +493,46 @@
 
         function nextImage(animate = true) {
             const currentProj = projects[currentProjectIndex];
-            if (currentProj.images.length <= 1) return;
-            currentImageIndex = (currentImageIndex + 1) % currentProj.images.length;
+            const imgs = currentProj.images;
+            if (imgs.length <= 1 || isTransitioning) return;
+
+            isTransitioning = true;
+            virtualIndex++;
+            currentImageIndex = (currentImageIndex + 1) % imgs.length;
+
             updateLayout(animate);
+
+            if (virtualIndex === imgs.length + 1) {
+                setTimeout(() => {
+                    virtualIndex = 1;
+                    updateLayout(false);
+                    isTransitioning = false;
+                }, transitionDuration);
+            } else {
+                setTimeout(() => { isTransitioning = false; }, transitionDuration);
+            }
         }
 
         function prevImage(animate = true) {
             const currentProj = projects[currentProjectIndex];
-            if (currentProj.images.length <= 1) return;
-            currentImageIndex = (currentImageIndex - 1 + currentProj.images.length) % currentProj.images.length;
+            const imgs = currentProj.images;
+            if (imgs.length <= 1 || isTransitioning) return;
+
+            isTransitioning = true;
+            virtualIndex--;
+            currentImageIndex = (currentImageIndex - 1 + imgs.length) % imgs.length;
+
             updateLayout(animate);
+
+            if (virtualIndex === 0) {
+                setTimeout(() => {
+                    virtualIndex = imgs.length;
+                    updateLayout(false);
+                    isTransitioning = false;
+                }, transitionDuration);
+            } else {
+                setTimeout(() => { isTransitioning = false; }, transitionDuration);
+            }
         }
 
         window.addEventListener('resize', () => {
@@ -470,14 +541,16 @@
             }
         });
 
-        // CONTROL DE PUNTERO (POINTER EVENTS)
+        // CONTROL DE ARRASTRE DE RATÓN
         let startX = 0;
         let startY = 0;
         let currentTranslateX = 0;
         let isDragging = false;
         let hasMoved = false;
 
-        modalImgContainer.addEventListener('pointerdown', (e) => {
+        modalImgContainer.addEventListener('mousedown', (e) => {
+            if (e.button !== 0 || isTransitioning) return;
+
             isDragging = true;
             hasMoved = false;
             startX = e.clientX;
@@ -485,16 +558,15 @@
 
             const slides = carouselTrack.querySelectorAll('.carousel-slide');
             currentTranslateX = 0;
-            for (let i = 0; i < currentImageIndex; i++) {
+            for (let i = 0; i < virtualIndex; i++) {
                 const img = slides[i].querySelector('img');
                 currentTranslateX += img ? img.getBoundingClientRect().width : 0;
             }
 
             carouselTrack.style.transition = 'none';
-            modalImgContainer.setPointerCapture(e.pointerId);
         });
 
-        modalImgContainer.addEventListener('pointermove', (e) => {
+        window.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
             const diffX = e.clientX - startX;
             const diffY = e.clientY - startY;
@@ -505,30 +577,24 @@
             }
         });
 
-        modalImgContainer.addEventListener('pointerup', (e) => {
+        window.addEventListener('mouseup', (e) => {
             if (!isDragging) return;
             isDragging = false;
 
             const slides = carouselTrack.querySelectorAll('.carousel-slide');
-            if (slides.length === 0) return;
+            if (slides.length === 0 || !hasMoved) return;
 
-            if (!hasMoved) {
-                nextImage(false);
-                return;
-            }
-
-            const activeImg = slides[currentImageIndex].querySelector('img');
+            const activeImg = slides[virtualIndex].querySelector('img');
             const slideWidth = activeImg ? activeImg.getBoundingClientRect().width : 300;
             const diffX = e.clientX - startX;
-            const currentProj = projects[currentProjectIndex];
 
-            if (diffX < -slideWidth * 0.15 && currentImageIndex < currentProj.images.length - 1) {
-                currentImageIndex++;
-            } else if (diffX > slideWidth * 0.15 && currentImageIndex > 0) {
-                currentImageIndex--;
+            if (diffX < -slideWidth * 0.15) {
+                nextImage(true);
+            } else if (diffX > slideWidth * 0.15) {
+                prevImage(true);
+            } else {
+                updateLayout(true);
             }
-
-            updateLayout(true);
         });
 
         modal.onclick = (e) => {
@@ -537,10 +603,17 @@
             }
         };
 
+        // EVENTOS DE TECLADO
         document.addEventListener('keydown', (e) => {
             if (!modal.classList.contains('active')) return;
-            if (e.key === 'ArrowRight') nextImage(true);
-            if (e.key === 'ArrowLeft') prevImage(true);
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                nextImage(true);
+            }
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevImage(true);
+            }
             if (e.key === 'Escape') closeModal();
         });
     </script>
